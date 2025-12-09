@@ -2,6 +2,8 @@
 /.ai/*
 /.claude/*
 /.cursor/*
+
+# Sandbox - local testing only (not tracked)
 /sandbox/*
 
 # Python
