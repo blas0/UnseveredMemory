@@ -11,31 +11,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Major Release - Memory, Query, Architectural, Decision, Weight Improvements
 
-This release consolidates Phases 1-4 of Plan #10 (CAM Evolution Framework) into a unified v2.0 release.
+This release consolidates the CAM Evolution Framework into a unified v2.0 release.
 
 #### Core Capabilities
 - Semantic embedding storage with Gemini
 - Knowledge graph with temporal, semantic, and causal relationships
 - Claude Code hook integration (automatic context injection)
 
-#### Intelligence Layer (Phase 1)
+#### Intelligence Layer
 - **Importance Tiers** - Weighted retrieval (critical/high/normal/reference)
 - **Decision Store** - Structured architectural decision records
 - **Invariant Management** - Enforced architectural constraints
 - **Causal Tracking** - Bug → root cause → fix chains
 
-#### Query DSL (Phase 3)
+#### Query DSL
 - **TOML Queries** - Structured search with constraints
 - **Graph Expansion** - Automatic relationship traversal
 - **Multi-Hop Reasoning** - Chained/parallel query strategies
 
-#### Memory Management (Phase 4 - CMR)
+#### Memory Management (CMR)
 - **Inflection Detection** - Find pivotal moments
 - **Smart Compression** - Preserve-aware memory management
 - **Reconstruction** - Post-compaction context recovery
 - **Adaptive Retrieval** - Task-aware search strategies
 
-#### Hook System Enhancements (Phase 2)
+#### Hook System Enhancements
 - **UserPromptSubmit** - Importance-weighted queries + invariant injection
 - **PostToolUse** - Auto decision capture + causal link tracking
 - **PreCompact** - Critical decision preservation + invariant snapshot
@@ -58,7 +58,7 @@ This release consolidates Phases 1-4 of Plan #10 (CAM Evolution Framework) into 
 
 ### New CLI Commands
 
-**Phase 1 - Data Model:**
+**Data Model:**
 ```bash
 # Importance Tiers
 set-importance <id> <tier>           # Set importance (critical|high|normal|reference)
@@ -80,7 +80,7 @@ trace-causality <id> [depth]
 get-related <id>
 ```
 
-**Phase 3 - Query DSL:**
+**Query DSL:**
 ```bash
 query-dsl '<toml>'                    # TOML-based structured query
 query-graph '<text>' [top_k] [depth]  # Query with graph expansion
@@ -88,7 +88,7 @@ multi-hop '<q1>' '<q2>' [--strategy]  # Chained/parallel queries
 get-embedding <id>                    # Retrieve by ID
 ```
 
-**Phase 4 - CMR:**
+**CMR:**
 ```bash
 inflection-points                     # Detect significant moments
 compress-memory [max_embeddings]      # Preserve-aware compression
@@ -113,7 +113,7 @@ To enable PR workflow:
 
 ## [1.7.x] - 2025-12-08
 
-### Phase 6: Automatic Context Crystallization
+### Automatic Context Crystallization
 - PreCompact hook for session preservation before compaction
 - Stop hook for proactive `/compact` suggestions
 - Session state system for cross-hook communication

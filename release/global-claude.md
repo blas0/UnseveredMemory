@@ -109,7 +109,7 @@ Claude automatically consults CAM at decision points through hooks:
 
 ### Advanced Features (v2.0+)
 
-Phase 3 (Query DSL) and Phase 4 (CMR) are power-user features NOT automated in hooks. Use them proactively:
+Query DSL and CMR are power-user features NOT automated in hooks. Use them proactively:
 
 **Query DSL (When complex search is needed):**
 ```bash

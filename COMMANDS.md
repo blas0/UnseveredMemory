@@ -184,7 +184,7 @@ Complete command reference for CAM (Continuous Architectural Memory).
 
 ---
 
-## Phase 1: Importance Tiers (v1.8.0)
+## Importance Tiers (v1.8.0+)
 
 ```bash
 # Set importance tier for an embedding
@@ -233,7 +233,7 @@ Complete command reference for CAM (Continuous Architectural Memory).
 
 ---
 
-## Phase 1: Decision Store (v1.8.0)
+## Decision Store (v1.8.0+)
 
 ```bash
 # Store architectural decision with context
@@ -279,7 +279,7 @@ Complete command reference for CAM (Continuous Architectural Memory).
 
 ---
 
-## Phase 1: Invariants (v1.8.0)
+## Invariants (v1.8.0+)
 
 ```bash
 # Store architectural invariant (constraint)
@@ -313,7 +313,7 @@ Complete command reference for CAM (Continuous Architectural Memory).
 
 ---
 
-## Phase 1: Causal Relationships (v1.8.0)
+## Causal Relationships (v1.8.0+)
 
 ```bash
 # Create causal link between embeddings
@@ -356,7 +356,7 @@ Complete command reference for CAM (Continuous Architectural Memory).
 
 ---
 
-## Phase 3: Query DSL (v2.0.0)
+## Query DSL (v2.0.0+)
 
 ```bash
 # Execute TOML-based structured query
@@ -430,7 +430,7 @@ type = "code"'
 
 ---
 
-## Phase 4: CMR - Contextual Memory Reweaving (v2.0.0)
+## CMR - Contextual Memory Reweaving (v2.0.0+)
 
 ```bash
 # Detect significant inflection points in session history
