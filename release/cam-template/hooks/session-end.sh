@@ -1,6 +1,6 @@
 #!/bin/bash
 # Global SessionEnd Hook: Intelligent Session Summary Generation
-# Version: 2.0.0
+# Version: 2.0.3
 
 set -e
 
@@ -9,6 +9,22 @@ INPUT=$(cat)
 SESSION_ID=$(echo "$INPUT" | jq -r '.session_id')
 CWD=$(echo "$INPUT" | jq -r '.cwd')
 PROJECT_NAME=$(basename "$CWD")
+
+# ═══════════════════════════════════════════════════════════════════════════
+# PHASE 0: UNCOMMITTED CHANGES CHECK (v2.0.3)
+# Warn if there are uncommitted changes that should have been PR'd
+# ═══════════════════════════════════════════════════════════════════════════
+
+UNCOMMITTED_WARNING=""
+if [ -d "$CWD/.git" ]; then
+  cd "$CWD"
+  UNCOMMITTED=$(git status --porcelain 2>/dev/null | head -20)
+  if [ -n "$UNCOMMITTED" ]; then
+    UNCOMMITTED_COUNT=$(echo "$UNCOMMITTED" | wc -l | tr -d ' ')
+    UNCOMMITTED_WARNING="⚠️  UNCOMMITTED CHANGES DETECTED ($UNCOMMITTED_COUNT files) - Consider committing and creating PR before ending session"
+  fi
+  cd - > /dev/null
+fi
 
 # ═══════════════════════════════════════════════════════════════════════════
 # PHASE 6: SESSION STATE CLEANUP
@@ -149,10 +165,11 @@ jq -n \
   --arg project "$PROJECT_NAME" \
   --arg summary_status "$SUMMARY_STATUS" \
   --arg graph_stats "$GRAPH_STATS" \
+  --arg uncommitted_warning "$UNCOMMITTED_WARNING" \
   '{
     continue: true,
     hookSpecificOutput: {
       hookEventName: "SessionEnd",
-      additionalContext: ("Session Summary\n\nProject: " + $project + "\nSession: " + $session_id + "\nOperations: " + $total_ops + " (Edit: " + $edit + ", Write: " + $write + ", Read: " + $read + ", Bash: " + $bash + ")\n\nStatus:\n  " + $summary_status + "\n  " + (if $graph_stats != "" then $graph_stats else "[~] Graph building skipped" end))
+      additionalContext: ((if $uncommitted_warning != "" then $uncommitted_warning + "\n\n" else "" end) + "Session Summary\n\nProject: " + $project + "\nSession: " + $session_id + "\nOperations: " + $total_ops + " (Edit: " + $edit + ", Write: " + $write + ", Read: " + $read + ", Bash: " + $bash + ")\n\nStatus:\n  " + $summary_status + "\n  " + (if $graph_stats != "" then $graph_stats else "[~] Graph building skipped" end))
     }
   }'

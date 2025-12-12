@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.0.3] - 2025-12-12
+
+### Added
+- **Orchestrator Agent** - General-purpose meta-agent for multi-agent coordination
+  - Spawns Explore, Plan, general-purpose agents
+  - Maximizes parallelism for independent subtasks
+  - Located in `release/agents/orchestrator.md`
+- **Completion Protocol** - Explicit instructions in global-claude.md requiring commit + PR for completed work
+- **Uncommitted Changes Warning** - SessionEnd hook now detects and warns about uncommitted changes
+
+### Changed
+- **setup.sh** - Now 8 steps (was 7), adds agents deployment to `~/.claude/agents/`
+- **session-end.sh** - Added Phase 0 uncommitted changes check with warning output
+
+### New Files
+- `release/agents/orchestrator.md` - Meta-agent for task orchestration
+- `release/agents/README.md` - Agent documentation
+
+---
+
 ## [2.0.0] - 2025-12-09
 
 ### Major Release - Memory, Query, Architectural, Decision, Weight Improvements

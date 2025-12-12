@@ -243,6 +243,27 @@ See [VERSIONING.md](~/.claude/cam-template/VERSIONING.md) for full policy.
 
 ---
 
+## Completion Protocol
+
+When work is complete, **always** finish with:
+
+1. **Commit** changes with descriptive message (conventional commits)
+2. **Push** to remote branch
+3. **Create PR** with summary and test plan
+4. **Report** PR URL to user
+
+**Do NOT wait for permission**—PRs are the expected output of completed work in this project. Skipping the PR step is a protocol violation.
+
+```bash
+# Expected flow
+git add <files>
+git commit -m "feat/fix/chore: description"
+git push origin <branch>
+gh pr create --title "..." --body "..."
+```
+
+---
+
 ## Agent Orchestration
 
 ### Orchestrator Agent
