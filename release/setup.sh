@@ -39,7 +39,7 @@ echo ""
 # Prerequisites Check
 # -------------------------------------------------------------------------------
 
-echo -e "${GREEN}[1/7] Checking prerequisites...${NC}"
+echo -e "${GREEN}[1/8] Checking prerequisites...${NC}"
 
 # Detect package manager
 PKG_MANAGER=""
@@ -170,20 +170,22 @@ echo ""
 # Create Directory Structure
 # -------------------------------------------------------------------------------
 
-echo -e "${GREEN}[2/7] Creating directory structure...${NC}"
+echo -e "${GREEN}[2/8] Creating directory structure...${NC}"
 
 mkdir -p "$CLAUDE_DIR"
 mkdir -p "$HOOKS_DIR"
+mkdir -p "$CLAUDE_DIR/agents"
 
 echo -e "  [v] Created $CLAUDE_DIR"
 echo -e "  [v] Created $HOOKS_DIR"
+echo -e "  [v] Created $CLAUDE_DIR/agents"
 echo ""
 
 # -------------------------------------------------------------------------------
 # Deploy Template
 # -------------------------------------------------------------------------------
 
-echo -e "${GREEN}[3/7] Deploying CAM template...${NC}"
+echo -e "${GREEN}[3/8] Deploying CAM template...${NC}"
 
 if [ -d "$TEMPLATE_DIR" ]; then
     echo -e "  ${YELLOW}[!] Existing template found at $TEMPLATE_DIR${NC}"
@@ -206,7 +208,7 @@ echo ""
 # Deploy Hooks
 # -------------------------------------------------------------------------------
 
-echo -e "${GREEN}[4/7] Installing hooks...${NC}"
+echo -e "${GREEN}[4/8] Installing hooks...${NC}"
 
 # Check if hooks already exist
 EXISTING_HOOKS=0
@@ -248,10 +250,58 @@ fi
 echo ""
 
 # -------------------------------------------------------------------------------
+# Deploy Agents
+# -------------------------------------------------------------------------------
+
+echo -e "${GREEN}[5/8] Installing agents...${NC}"
+
+AGENTS_DIR="$CLAUDE_DIR/agents"
+
+# Check if agents already exist
+if [ -d "$SCRIPT_DIR/agents" ]; then
+    EXISTING_AGENTS=0
+    for agent in "$SCRIPT_DIR/agents/"*.md; do
+        AGENT_NAME=$(basename "$agent")
+        if [ -f "$AGENTS_DIR/$AGENT_NAME" ]; then
+            EXISTING_AGENTS=1
+            break
+        fi
+    done
+
+    if [ $EXISTING_AGENTS -eq 1 ]; then
+        echo -e "  ${YELLOW}[!] Existing agents found in $AGENTS_DIR${NC}"
+        read -p "  Overwrite all agents? (y/N): " OVERWRITE_AGENTS
+        if [[ $OVERWRITE_AGENTS =~ ^[Yy]$ ]]; then
+            for agent in "$SCRIPT_DIR/agents/"*.md; do
+                if [ -f "$agent" ]; then
+                    AGENT_NAME=$(basename "$agent")
+                    cp "$agent" "$AGENTS_DIR/"
+                    echo -e "  [v] $AGENT_NAME"
+                fi
+            done
+        else
+            echo -e "  [>] Skipped. To manually update agents, run:"
+            echo -e "      ${BLUE}cp $SCRIPT_DIR/agents/*.md $AGENTS_DIR/${NC}"
+        fi
+    else
+        for agent in "$SCRIPT_DIR/agents/"*.md; do
+            if [ -f "$agent" ]; then
+                AGENT_NAME=$(basename "$agent")
+                cp "$agent" "$AGENTS_DIR/"
+                echo -e "  [v] $AGENT_NAME"
+            fi
+        done
+    fi
+else
+    echo -e "  ${YELLOW}[!] No agents directory found in release${NC}"
+fi
+echo ""
+
+# -------------------------------------------------------------------------------
 # Configure Settings
 # -------------------------------------------------------------------------------
 
-echo -e "${GREEN}[5/7] Configuring Claude Code settings...${NC}"
+echo -e "${GREEN}[6/8] Configuring Claude Code settings...${NC}"
 
 # Generate settings.json with correct paths for THIS user
 SETTINGS_FILE="$CLAUDE_DIR/settings.json"
@@ -372,7 +422,7 @@ echo ""
 # Configure API Key
 # -------------------------------------------------------------------------------
 
-echo -e "${GREEN}[6/7] Configuring Gemini API key...${NC}"
+echo -e "${GREEN}[7/8] Configuring Gemini API key...${NC}"
 
 ENV_FILE="$HOOKS_DIR/.env"
 
@@ -420,7 +470,7 @@ echo ""
 # Install Global CLAUDE.md
 # -------------------------------------------------------------------------------
 
-echo -e "${GREEN}[7/7] Installing global CLAUDE.md...${NC}"
+echo -e "${GREEN}[8/8] Installing global CLAUDE.md...${NC}"
 
 GLOBAL_CLAUDE="$CLAUDE_DIR/CLAUDE.md"
 
@@ -456,6 +506,7 @@ echo ""
 echo -e "${BLUE}Installed components:${NC}"
 echo -e "  [*] CAM template:  $TEMPLATE_DIR"
 echo -e "  [*] Hooks:         $HOOKS_DIR"
+echo -e "  [*] Agents:        $CLAUDE_DIR/agents"
 echo -e "  [*] Settings:      $SETTINGS_FILE"
 echo -e "  [*] API config:    $ENV_FILE"
 echo ""

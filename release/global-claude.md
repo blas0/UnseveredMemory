@@ -243,4 +243,41 @@ See [VERSIONING.md](~/.claude/cam-template/VERSIONING.md) for full policy.
 
 ---
 
+## Agent Orchestration
+
+### Orchestrator Agent
+
+For complex, multi-step tasks, invoke the **orchestrator** agent to coordinate work across specialized agents:
+
+```bash
+# The orchestrator analyzes your request and delegates to:
+# - Explore agents (fast codebase discovery)
+# - Plan agents (implementation strategy)
+# - general-purpose agents (implementation work)
+```
+
+**When to Use Orchestrator**:
+- Tasks requiring research → planning → implementation flow
+- Multi-file changes that benefit from parallel exploration
+- Complex debugging requiring systematic investigation
+- Architectural decisions needing comprehensive analysis
+
+**Invocation**:
+```
+Task(subagent_type="orchestrator", prompt="Your complex task")
+```
+
+The orchestrator inherits CAM awareness through this environment—no explicit CAM configuration needed in delegation prompts.
+
+### Available Agent Types
+
+| Agent | Speed | Use For |
+|-------|-------|---------|
+| `Explore` | Fast | File search, codebase discovery, pattern matching |
+| `Plan` | Medium | Implementation strategy, architectural planning |
+| `general-purpose` | Medium | Multi-step implementation, complex coding |
+| `orchestrator` | Varies | Coordinating multiple agents for complex tasks |
+
+---
+
 *Claude reads `.ai/` for context. CAM indexes `.ai/` for semantic queries.*
