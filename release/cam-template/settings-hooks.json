@@ -1,9 +1,20 @@
 {
-  "_comment": "NOTE: __HOME__ placeholders are automatically substituted with $HOME by cam-sync-template.sh during deployment.",
+  "_comment": "CAM Cognitive Hook System v2.1.0 - NOTE: __HOME__ placeholders are automatically substituted with $HOME by cam-sync-template.sh during deployment.",
+  "_cognitive_mapping": {
+    "SessionStart": "ORIENT - Establish context, load memories",
+    "UserPromptSubmit": "PERCEIVE - Understand intent, proactive retrieval",
+    "PreToolUse": "ATTEND - Focus attention, pattern retrieval",
+    "PostToolUse": "ENCODE - Store operations, create relationships",
+    "PermissionRequest": "DECIDE - Evaluate permissions, record decisions",
+    "SubagentStop": "INTEGRATE - Consolidate subagent results",
+    "PreCompact": "HOLD - Preserve critical context",
+    "SessionEnd": "REFLECT - Summarize session, consolidate knowledge",
+    "Stop": "REFLECT - Handle session stop/interrupt"
+  },
   "hooks": {
     "SessionStart": [
       {
-        "matcher": "startup",
+        "matcher": "",
         "hooks": [
           {
             "type": "command",
@@ -27,7 +38,7 @@
     ],
     "PreToolUse": [
       {
-        "matcher": "Bash|Read|Edit|Write|Glob|Grep",
+        "matcher": "Bash|Read|Edit|Write|Glob|Grep|Task",
         "hooks": [
           {
             "type": "command",
@@ -49,13 +60,37 @@
         ]
       }
     ],
+    "PermissionRequest": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "__HOME__/.claude/hooks/permission-request.sh",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "__HOME__/.claude/hooks/subagent-stop.sh",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
     "PreCompact": [
       {
         "matcher": "",
         "hooks": [
           {
             "type": "command",
-            "command": "__HOME__/.claude/hooks/crystallize.sh",
+            "command": "__HOME__/.claude/hooks/pre-compact.sh",
             "timeout": 60
           }
         ]
@@ -67,15 +102,15 @@
         "hooks": [
           {
             "type": "command",
-            "command": "__HOME__/.claude/hooks/suggest-compact.sh",
-            "timeout": 10
+            "command": "__HOME__/.claude/hooks/stop.sh",
+            "timeout": 30
           }
         ]
       }
     ],
     "SessionEnd": [
       {
-        "matcher": "shutdown",
+        "matcher": "",
         "hooks": [
           {
             "type": "command",

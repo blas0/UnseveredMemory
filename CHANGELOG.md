@@ -7,6 +7,72 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.1.0] - 2025-12-13
+
+### Major Release - Cognitive Hook Architecture
+
+This release transforms the CAM hook system from discrete event handlers into a unified cognitive processing framework with shared memory state.
+
+#### Cognitive Function Mapping
+- **ORIENT** (SessionStart) - Establish context, load memories, initialize Memory Bus
+- **PERCEIVE** (UserPromptSubmit) - Understand intent, proactive retrieval, primer recovery
+- **ATTEND** (PreToolUse) - Focus attention, pattern retrieval, smart decision-point filtering
+- **ENCODE** (PostToolUse) - Store operations, create relationships, auto-ingest
+- **DECIDE** (PermissionRequest) - Evaluate permissions, record decision rationale [NEW]
+- **INTEGRATE** (SubagentStop) - Consolidate subagent results [NEW]
+- **HOLD** (PreCompact) - Preserve critical context before compaction
+- **REFLECT** (SessionEnd/Stop) - Summarize session, consolidate knowledge graph
+
+#### Memory Bus System
+- Shared working memory across all cognitive functions
+- JSON state file per session (`~/.claude/.session-state/{session_id}.json`)
+- Atomic file operations with flock-based locking
+- Cross-hook communication without global variables
+- Cognitive load tracking with weighted formula
+
+#### Memory Bus Schema
+- **Working Memory**: Current intent, attention focus (max 7 items), active context (max 10), session narrative
+- **Cognitive Load**: Real-time calculation with thresholds (low/medium/high/critical)
+- **Decisions**: Recorded decisions with rationale, alternatives, and confidence
+- **Commitments**: Pending/completed task commitments with dependencies
+
+#### New Hook Coverage
+- **PermissionRequest** - DECIDE cognitive function for permission evaluation
+- **SubagentStop** - INTEGRATE cognitive function for subagent result consolidation
+- Fixed matchers (removed invalid "startup"/"shutdown" patterns)
+- All 9 Claude Code hook events now covered
+
+#### Architecture
+- **cam-cognitive.sh** - Unified dispatch script (850+ lines)
+- **memory_bus_core.sh** - Shared memory library (750+ lines)
+- Thin wrapper hooks delegate to unified cognitive system
+- Backward-compatible hook names maintained
+
+### New Files
+- `release/cam-template/hooks/cam-cognitive.sh` - Unified cognitive dispatch
+- `release/cam-template/hooks/memory_bus_core.sh` - Memory Bus core library
+- `release/cam-template/hooks/pre-compact.sh` - HOLD cognitive function wrapper
+- `release/cam-template/hooks/stop.sh` - REFLECT stop variant wrapper
+- `release/cam-template/hooks/permission-request.sh` - DECIDE wrapper
+- `release/cam-template/hooks/subagent-stop.sh` - INTEGRATE wrapper
+- `release/cam-template/hooks/migrate-to-cognitive.sh` - Migration script
+- `release/cam-template/tests/` - Comprehensive test suite (27 tests)
+
+### Migration
+
+```bash
+# Automatic migration with backup
+~/.claude/hooks/migrate-to-cognitive.sh
+
+# Or manual sync
+~/.claude/hooks/cam-sync-template.sh --all
+
+# Project upgrade
+./cam.sh upgrade --force
+```
+
+---
+
 ## [2.0.3] - 2025-12-12
 
 ### Added

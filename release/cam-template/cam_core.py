@@ -23,7 +23,7 @@ from scipy.cluster.hierarchy import fcluster, linkage
 from scipy.spatial.distance import cosine as cosine_distance
 
 # Version
-CAM_VERSION = "2.0.3"
+CAM_VERSION = "2.1.0"
 
 # Configuration
 CAM_DIR = os.path.join(os.path.dirname(__file__))

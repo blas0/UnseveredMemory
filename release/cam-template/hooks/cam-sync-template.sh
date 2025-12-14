@@ -1,6 +1,6 @@
 #!/bin/bash
 # cam-sync-template.sh - Deploy CAM template to live locations
-# Version: 2.0.0
+# Version: 2.1.0
 # Usage: cam-sync-template.sh [--hooks-only | --settings-only | --all]
 #
 # DIRECTION: ~/.claude/cam-template/ → ~/.claude/hooks/ & settings.json
@@ -48,19 +48,60 @@ deploy_hooks() {
     # Ensure target directory exists
     mkdir -p "$HOOKS_DIR"
 
+    # Core cognitive system
     HOOKS=(
+        "memory_bus_core.sh"
+        "cam-cognitive.sh"
+    )
+
+    # Hook wrappers (delegate to cam-cognitive.sh)
+    HOOK_WRAPPERS=(
+        "session-start.sh"
         "prompt-cam.sh"
         "query-cam.sh"
         "update-cam.sh"
-        "session-start.sh"
         "session-end.sh"
+        "pre-compact.sh"
+        "stop.sh"
+        "permission-request.sh"
+        "subagent-stop.sh"
+    )
+
+    # Utility scripts
+    UTILITIES=(
         "cam-note.sh"
         "init-cam.sh"
         "cam-sync-template.sh"
         "scaffold-ai.sh"
     )
 
+    # Deploy core cognitive system first
+    echo -e "  ${BLUE}[Core Cognitive System]${NC}"
     for hook in "${HOOKS[@]}"; do
+        if [ -f "$TEMPLATE_DIR/hooks/$hook" ]; then
+            cp "$TEMPLATE_DIR/hooks/$hook" "$HOOKS_DIR/"
+            chmod +x "$HOOKS_DIR/$hook"
+            echo -e "  ${GREEN}[v]${NC} $hook"
+        else
+            echo -e "  ${YELLOW}[!]  Not in template: $hook${NC}"
+        fi
+    done
+
+    echo ""
+    echo -e "  ${BLUE}[Hook Wrappers]${NC}"
+    for hook in "${HOOK_WRAPPERS[@]}"; do
+        if [ -f "$TEMPLATE_DIR/hooks/$hook" ]; then
+            cp "$TEMPLATE_DIR/hooks/$hook" "$HOOKS_DIR/"
+            chmod +x "$HOOKS_DIR/$hook"
+            echo -e "  ${GREEN}[v]${NC} $hook"
+        else
+            echo -e "  ${YELLOW}[!]  Not in template: $hook${NC}"
+        fi
+    done
+
+    echo ""
+    echo -e "  ${BLUE}[Utilities]${NC}"
+    for hook in "${UTILITIES[@]}"; do
         if [ -f "$TEMPLATE_DIR/hooks/$hook" ]; then
             cp "$TEMPLATE_DIR/hooks/$hook" "$HOOKS_DIR/"
             chmod +x "$HOOKS_DIR/$hook"
