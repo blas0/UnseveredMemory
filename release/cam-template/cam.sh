@@ -297,6 +297,78 @@ case "$1" in
         "$VENV_PYTHON" "$CAM_CORE" "$@"
         ;;
 
+    promote-insights|insights)
+        # Insight promotion system - review and promote staged insights
+        INSIGHTS_SCRIPT="$HOME/.claude/hooks/insight-promote.sh"
+        if [ -f "$INSIGHTS_SCRIPT" ]; then
+            shift  # Remove 'promote-insights' or 'insights'
+            "$INSIGHTS_SCRIPT" "$@"
+        else
+            echo -e "${RED}Error: insight-promote.sh not found${NC}"
+            echo "Run migration: ~/.claude/hooks/migrate-insights.sh --global"
+            exit 1
+        fi
+        ;;
+
+    insights-init)
+        # Initialize insights directory in current project
+        EXTRACT_SCRIPT="$HOME/.claude/hooks/insight-extract.sh"
+        if [ -f "$EXTRACT_SCRIPT" ]; then
+            "$EXTRACT_SCRIPT" init "$(pwd)"
+        else
+            echo -e "${RED}Error: insight-extract.sh not found${NC}"
+            echo "Run migration: ~/.claude/hooks/migrate-insights.sh --global"
+            exit 1
+        fi
+        ;;
+
+    insights-cleanup)
+        # Clean up old insights
+        EXTRACT_SCRIPT="$HOME/.claude/hooks/insight-extract.sh"
+        if [ -f "$EXTRACT_SCRIPT" ]; then
+            "$EXTRACT_SCRIPT" cleanup "$(pwd)" "${2:-30}"
+        else
+            echo -e "${RED}Error: insight-extract.sh not found${NC}"
+            exit 1
+        fi
+        ;;
+
+    update-check)
+        # Check for CAM updates
+        UPDATE_SCRIPT="$HOME/.claude/hooks/cam-update-check.sh"
+        if [ -f "$UPDATE_SCRIPT" ]; then
+            shift  # Remove 'update-check'
+            "$UPDATE_SCRIPT" "$@"
+        else
+            echo -e "${RED}Error: cam-update-check.sh not found${NC}"
+            echo "Run migration: ~/.claude/hooks/migrate-insights.sh --global"
+            exit 1
+        fi
+        ;;
+
+    update)
+        # Alias for update-check --update
+        UPDATE_SCRIPT="$HOME/.claude/hooks/cam-update-check.sh"
+        if [ -f "$UPDATE_SCRIPT" ]; then
+            "$UPDATE_SCRIPT" --update
+        else
+            echo -e "${RED}Error: cam-update-check.sh not found${NC}"
+            exit 1
+        fi
+        ;;
+
+    migrate)
+        # Run migration script
+        MIGRATE_SCRIPT="$HOME/.claude/hooks/migrate-insights.sh"
+        if [ -f "$MIGRATE_SCRIPT" ]; then
+            shift  # Remove 'migrate'
+            "$MIGRATE_SCRIPT" "$@"
+        else
+            echo -e "${RED}Error: migrate-insights.sh not found${NC}"
+            exit 1
+        fi
+        ;;
+
     release)
         # Release management: bump version and scaffold changelog
         NEW_VERSION="$2"

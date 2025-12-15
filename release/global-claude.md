@@ -34,7 +34,8 @@ CAM hooks fire automatically during Claude Code sessions:
 - **UserPromptSubmit**: Queries CAM before processing your message (proactive context injection)
 - **PreToolUse**: Queries CAM before tool execution
 - **PostToolUse**: Annotates operations after completion
-- **SessionEnd**: Summarizes session and refines knowledge graph
+- **SessionEnd**: Summarizes session, extracts insights, refines knowledge graph
+- **UpdateCheck**: Checks for CAM updates (daily, rate-limited)
 
 ### Manual Commands
 
@@ -148,6 +149,113 @@ type = "code"'
 - `multi-hop`: Multi-step questions ("what caused X then how was Y fixed")
 - `reweave`: After compaction or when context seems disconnected
 - `adaptive-retrieve`: Debugging (prioritizes recent/causal) vs architecture (prioritizes decisions)
+
+### Insights Pipeline (v2.0.3)
+
+Auto-extract valuable session knowledge without polluting curated `.ai/` documentation.
+
+**How It Works:**
+1. **Extract**: At session end, insights are extracted from decisions, patterns, and gotchas
+2. **Filter**: Duplicate/similar content is automatically filtered (novelty threshold: 0.85)
+3. **Stage**: Novel insights are saved to `.ai/.insights/` staging directory
+4. **Promote**: Human reviews and promotes worthy insights to curated docs
+
+**Directory Structure:**
+```
+.ai/.insights/
+├── decisions/    # Why X instead of Y
+├── patterns/     # Observed conventions
+├── gotchas/      # Warnings and pitfalls
+├── .archive/     # Old/rejected insights
+└── _index.json   # Metadata tracking
+```
+
+**Commands:**
+```bash
+# List pending insights
+./.claude/cam/cam.sh promote-insights --list
+
+# Interactive review (Accept/Edit/Skip/Reject)
+./.claude/cam/cam.sh promote-insights --interactive
+
+# Auto-accept high-confidence insights (>0.9)
+./.claude/cam/cam.sh promote-insights --auto-accept 0.9
+
+# Initialize insights directory
+./.claude/cam/cam.sh insights-init
+
+# Clean up old insights (default: 30 days)
+./.claude/cam/cam.sh insights-cleanup [days]
+```
+
+**Safeguards:**
+- Never auto-modifies curated `.ai/` files
+- Maximum 5 insights per session (rate limiting)
+- 2000 character limit per insight
+- Blocks transient content (TODO, FIXME, hack, etc.)
+- By default, `.insights/` is gitignored
+
+### Auto-Update System (v2.0.3)
+
+Automatic daily checks for CAM updates with human-gated installation.
+
+**How It Works:**
+1. **Check**: At session start, checks for updates (rate-limited to once per 24 hours)
+2. **Notify**: If update available, shows notification in session context
+3. **Update**: Manual command to download and install (with backup)
+
+**Commands:**
+```bash
+# Check for updates
+./.claude/cam/cam.sh update-check
+
+# Force check (ignore rate limit)
+./.claude/cam/cam.sh update-check --force
+
+# Download and install update
+./.claude/cam/cam.sh update
+
+# View update system status
+~/.claude/hooks/cam-update-check.sh --status
+
+# Configure upstream repository
+~/.claude/hooks/cam-update-check.sh --configure https://github.com/org/repo.git main
+
+# Skip a specific version
+~/.claude/hooks/cam-update-check.sh --skip 2.3.0
+
+# Disable auto-checking
+~/.claude/hooks/cam-update-check.sh --disable
+```
+
+**Configuration:** `~/.claude/cam-update-config.json`
+
+### Migration (v2.0.3)
+
+Upgrade existing CAM installations to the latest version.
+
+**Commands:**
+```bash
+# Migrate global installation (~/.claude/)
+~/.claude/hooks/migrate-insights.sh --global
+
+# Migrate specific project
+~/.claude/hooks/migrate-insights.sh /path/to/project
+
+# Migrate all CAM-initialized projects
+~/.claude/hooks/migrate-insights.sh --all
+
+# Or via cam.sh
+./.claude/cam/cam.sh migrate --global
+./.claude/cam/cam.sh migrate /path/to/project
+```
+
+**What Migration Does:**
+1. Backs up existing installation
+2. Installs new hooks (insight-extract, insight-promote, cam-update-check)
+3. Updates settings-hooks.json configuration
+4. Creates `.ai/.insights/` in projects
+5. Initializes update configuration
 
 ### Proactive CAM Usage (Manual Consultation)
 

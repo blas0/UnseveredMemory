@@ -31,7 +31,7 @@ HOOKS_DIR="$CLAUDE_DIR/hooks"
 
 echo -e "${BLUE}===============================================================================${NC}"
 echo -e "${BLUE}    CAM - Continuous Architectural Memory${NC}"
-echo -e "${BLUE}    Installation Script v1.2.8${NC}"
+echo -e "${BLUE}    Installation Script v2.0.3${NC}"
 echo -e "${BLUE}===============================================================================${NC}"
 echo ""
 
@@ -312,12 +312,17 @@ HOOKS_CONFIG=$(cat << EOF
   "hooks": {
     "SessionStart": [
       {
-        "matcher": "startup",
+        "matcher": "",
         "hooks": [
           {
             "type": "command",
             "command": "$HOOKS_DIR/session-start.sh",
             "timeout": 60
+          },
+          {
+            "type": "command",
+            "command": "$HOOKS_DIR/cam-update-check.sh hook",
+            "timeout": 15
           }
         ]
       }
@@ -336,7 +341,7 @@ HOOKS_CONFIG=$(cat << EOF
     ],
     "PreToolUse": [
       {
-        "matcher": "*",
+        "matcher": "Bash|Read|Edit|Write|Glob|Grep|Task",
         "hooks": [
           {
             "type": "command",
@@ -348,7 +353,7 @@ HOOKS_CONFIG=$(cat << EOF
     ],
     "PostToolUse": [
       {
-        "matcher": "*",
+        "matcher": "Bash|Read|Edit|Write",
         "hooks": [
           {
             "type": "command",
@@ -360,12 +365,17 @@ HOOKS_CONFIG=$(cat << EOF
     ],
     "SessionEnd": [
       {
-        "matcher": "shutdown",
+        "matcher": "",
         "hooks": [
           {
             "type": "command",
             "command": "$HOOKS_DIR/session-end.sh",
             "timeout": 60
+          },
+          {
+            "type": "command",
+            "command": "$HOOKS_DIR/insight-extract.sh extract",
+            "timeout": 30
           }
         ]
       }
@@ -510,10 +520,18 @@ echo -e "  [*] Agents:        $CLAUDE_DIR/agents"
 echo -e "  [*] Settings:      $SETTINGS_FILE"
 echo -e "  [*] API config:    $ENV_FILE"
 echo ""
+echo -e "${BLUE}New in v2.0.3:${NC}"
+echo -e "  [+] Insights Pipeline: Auto-extract session knowledge to .ai/.insights/"
+echo -e "  [+] Update Checker: Daily checks for CAM updates"
+echo -e "  [+] Migration Tool: Easy upgrades for existing installations"
+echo ""
 echo -e "${BLUE}Next steps:${NC}"
 echo -e "  1. Navigate to any project directory"
 echo -e "  2. Run: ${GREEN}~/.claude/hooks/init-cam.sh${NC}"
 echo -e "  3. Start Claude Code: ${GREEN}claude${NC}"
+echo ""
+echo -e "${BLUE}Configure update checking (optional):${NC}"
+echo -e "  ${GREEN}~/.claude/hooks/cam-update-check.sh --configure https://github.com/your-org/cam-system.git${NC}"
 echo ""
 echo -e "${BLUE}Verify installation:${NC}"
 echo -e "  ${GREEN}cat ~/.claude/settings.json | jq '.hooks | keys'${NC}"

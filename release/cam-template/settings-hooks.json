@@ -1,14 +1,14 @@
 {
-  "_comment": "CAM Cognitive Hook System v2.1.0 - NOTE: __HOME__ placeholders are automatically substituted with $HOME by cam-sync-template.sh during deployment.",
+  "_comment": "CAM Cognitive Hook System v2.0.3 - NOTE: __HOME__ placeholders are automatically substituted with $HOME by cam-sync-template.sh during deployment.",
   "_cognitive_mapping": {
-    "SessionStart": "ORIENT - Establish context, load memories",
+    "SessionStart": "ORIENT - Establish context, load memories, check updates",
     "UserPromptSubmit": "PERCEIVE - Understand intent, proactive retrieval",
     "PreToolUse": "ATTEND - Focus attention, pattern retrieval",
     "PostToolUse": "ENCODE - Store operations, create relationships",
     "PermissionRequest": "DECIDE - Evaluate permissions, record decisions",
     "SubagentStop": "INTEGRATE - Consolidate subagent results",
     "PreCompact": "HOLD - Preserve critical context",
-    "SessionEnd": "REFLECT - Summarize session, consolidate knowledge",
+    "SessionEnd": "REFLECT - Summarize session, extract insights, consolidate knowledge",
     "Stop": "REFLECT - Handle session stop/interrupt"
   },
   "hooks": {
@@ -20,6 +20,11 @@
             "type": "command",
             "command": "__HOME__/.claude/hooks/session-start.sh",
             "timeout": 60
+          },
+          {
+            "type": "command",
+            "command": "__HOME__/.claude/hooks/cam-update-check.sh hook",
+            "timeout": 15
           }
         ]
       }
@@ -116,6 +121,11 @@
             "type": "command",
             "command": "__HOME__/.claude/hooks/session-end.sh",
             "timeout": 60
+          },
+          {
+            "type": "command",
+            "command": "__HOME__/.claude/hooks/insight-extract.sh extract",
+            "timeout": 30
           }
         ]
       }

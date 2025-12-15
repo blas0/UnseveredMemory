@@ -1,7 +1,7 @@
 #!/bin/bash
 # init-cam.sh - CAM + .ai/ Documentation System Initialization
 # Unified entry point for initializing CAM interface and .ai/ doc management
-# Version: 2.0.0
+# Version: 2.0.3
 
 set -e
 
@@ -372,6 +372,80 @@ EOF
         echo -e "  [v] Created minimal .ai/ structure"
         echo -e "  [*] Run scaffold-ai.sh separately for full scaffolding"
     fi
+
+    # Always scaffold .insights/ directory (v2.2.0+)
+    scaffold_insights_dir
+}
+
+# =============================================================================
+# .AI/.INSIGHTS/ SCAFFOLDING (v2.2.0+)
+# =============================================================================
+
+scaffold_insights_dir() {
+    local insights_dir="$AI_DIR/.insights"
+
+    if [ -d "$insights_dir" ]; then
+        echo -e "  [v] .ai/.insights/ already exists"
+        return 0
+    fi
+
+    echo -e "  [+] Creating .ai/.insights/ staging directory..."
+
+    # Create directory structure
+    mkdir -p "$insights_dir/decisions"
+    mkdir -p "$insights_dir/patterns"
+    mkdir -p "$insights_dir/gotchas"
+    mkdir -p "$insights_dir/.archive"
+
+    # Create index file
+    echo '{"version": "1.0", "insights": [], "last_cleanup": null}' > "$insights_dir/_index.json"
+
+    # Create .gitignore (insights are staging, not committed by default)
+    cat > "$insights_dir/.gitignore" << 'GITIGNORE'
+# Auto-generated insights - review before committing
+# Remove this file if you want to track insights in git
+*
+!.gitignore
+!_index.json
+!README.md
+GITIGNORE
+
+    # Create README
+    cat > "$insights_dir/README.md" << 'INSIGHTSREADME'
+# AI-Generated Insights (Staging Area)
+
+This directory contains **auto-extracted insights** from AI work sessions.
+
+## Purpose
+
+These are NOT curated documentation. They are a staging area for potential knowledge worth preserving.
+
+## Review Process
+
+Run `./cam.sh promote-insights` to:
+- Review each insight
+- Accept (add to curated .ai/ docs)
+- Edit (modify then add)
+- Skip (keep for later)
+- Reject (delete)
+
+## Directory Structure
+
+```
+.insights/
+├── decisions/    # Why X instead of Y
+├── patterns/     # Observed conventions
+├── gotchas/      # Warnings and pitfalls
+├── .archive/     # Old/rejected insights
+└── _index.json   # Metadata tracking
+```
+
+## Note
+
+By default, this directory is gitignored. Remove `.gitignore` if you want to track insights in version control.
+INSIGHTSREADME
+
+    echo -e "  [v] Created .ai/.insights/ staging directory"
 }
 
 # =============================================================================

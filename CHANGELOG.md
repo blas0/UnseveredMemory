@@ -82,14 +82,34 @@ This release transforms the CAM hook system from discrete event handlers into a 
   - Located in `release/agents/orchestrator.md`
 - **Completion Protocol** - Explicit instructions in global-claude.md requiring commit + PR for completed work
 - **Uncommitted Changes Warning** - SessionEnd hook now detects and warns about uncommitted changes
+- **Insights Pipeline** - Auto-extract session knowledge without polluting curated `.ai/` docs
+  - Staging directory: `.ai/.insights/{decisions,patterns,gotchas,.archive}`
+  - Novelty filtering (0.85 similarity threshold) prevents duplicates
+  - Rate limiting: Max 5 insights per session, 2000 char limit
+  - Human-gated promotion: Interactive review (Accept/Edit/Skip/Reject)
+  - Commands: `promote-insights`, `insights-init`, `insights-cleanup`
+- **Auto-Update System** - Daily rate-limited checks for CAM updates
+  - Configurable upstream repository
+  - Backup before update with rollback on failure
+  - Commands: `update-check`, `update`, `--configure`, `--skip`, `--disable`
+- **Migration System** - Upgrade existing installations
+  - Global migration: `migrate --global`
+  - Project migration: `migrate /path/to/project`
+  - Batch migration: `migrate --all`
 
 ### Changed
 - **setup.sh** - Now 8 steps (was 7), adds agents deployment to `~/.claude/agents/`
 - **session-end.sh** - Added Phase 0 uncommitted changes check with warning output
+- **init-cam.sh** - Now scaffolds `.ai/.insights/` directory structure
+- **settings-hooks.json** - Added `insight-extract.sh` to SessionEnd, `cam-update-check.sh` to SessionStart
 
 ### New Files
 - `release/agents/orchestrator.md` - Meta-agent for task orchestration
 - `release/agents/README.md` - Agent documentation
+- `release/cam-template/hooks/insight-extract.sh` - Session insight extraction
+- `release/cam-template/hooks/insight-promote.sh` - Human-gated insight promotion
+- `release/cam-template/hooks/cam-update-check.sh` - Auto-update checking system
+- `release/cam-template/hooks/migrate-insights.sh` - Migration script for upgrades
 
 ---
 
