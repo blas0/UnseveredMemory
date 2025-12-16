@@ -1,7 +1,7 @@
 #!/bin/bash
 # ═══════════════════════════════════════════════════════════════════════════════
-# migrate-insights.sh - Upgrade existing CAM installations to v2.0.3+
-# Version: 2.0.3
+# migrate-insights.sh - Upgrade existing CAM installations to v2.1.0+
+# Version: 2.1.0
 #
 # PURPOSE: Seamlessly upgrade existing CAM installations with new features:
 #   - Insights Pipeline (.ai/.insights/ system)
@@ -16,7 +16,7 @@
 
 set -e
 
-MIGRATE_VERSION="2.0.3"
+MIGRATE_VERSION="2.1.0"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Colors

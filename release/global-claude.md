@@ -150,7 +150,7 @@ type = "code"'
 - `reweave`: After compaction or when context seems disconnected
 - `adaptive-retrieve`: Debugging (prioritizes recent/causal) vs architecture (prioritizes decisions)
 
-### Insights Pipeline (v2.0.3)
+### Insights Pipeline (v2.1.0)
 
 Auto-extract valuable session knowledge without polluting curated `.ai/` documentation.
 
@@ -195,7 +195,7 @@ Auto-extract valuable session knowledge without polluting curated `.ai/` documen
 - Blocks transient content (TODO, FIXME, hack, etc.)
 - By default, `.insights/` is gitignored
 
-### Auto-Update System (v2.0.3)
+### Auto-Update System (v2.1.0)
 
 Automatic daily checks for CAM updates with human-gated installation.
 
@@ -230,7 +230,7 @@ Automatic daily checks for CAM updates with human-gated installation.
 
 **Configuration:** `~/.claude/cam-update-config.json`
 
-### Migration (v2.0.3)
+### Migration (v2.1.0)
 
 Upgrade existing CAM installations to the latest version.
 
@@ -321,7 +321,7 @@ Before modifying CAM infrastructure, append changes to project root `CHANGELOG.m
 **Simple Rule: Any code change = patch increment.**
 
 ```
-2.0.0 → 2.0.1 → 2.0.2 → 2.0.3 → ...
+2.0.0 → 2.0.1 → 2.0.2 → 2.0.3 → 2.1.0 → ...
 ```
 
 **When modifying any CAM code** (hooks, cam_core.py, cam.sh):

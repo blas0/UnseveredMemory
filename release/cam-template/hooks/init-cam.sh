@@ -1,7 +1,7 @@
 #!/bin/bash
 # init-cam.sh - CAM + .ai/ Documentation System Initialization
 # Unified entry point for initializing CAM interface and .ai/ doc management
-# Version: 2.0.3
+# Version: 2.1.0
 
 set -e
 

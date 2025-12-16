@@ -1,7 +1,7 @@
 #!/bin/bash
 # ═══════════════════════════════════════════════════════════════════════════════
 # cam-update-check.sh - Automatic CAM update checker
-# Version: 2.0.3
+# Version: 2.1.0
 #
 # PURPOSE: Check for CAM updates from upstream repository
 # TRIGGER: SessionStart (rate-limited to once per day) or manual
@@ -17,7 +17,7 @@
 
 set -e
 
-UPDATE_VERSION="2.0.3"
+UPDATE_VERSION="2.1.0"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Colors

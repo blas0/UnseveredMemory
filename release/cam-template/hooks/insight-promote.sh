@@ -1,7 +1,7 @@
 #!/bin/bash
 # ═══════════════════════════════════════════════════════════════════════════════
 # insight-promote.sh - Human-gated promotion of staged insights
-# Version: 2.0.3
+# Version: 2.1.0
 #
 # PURPOSE: Review auto-extracted insights and promote worthy ones to curated .ai/
 # USAGE: ./insight-promote.sh [--interactive] [--list] [--auto-accept THRESHOLD]
@@ -12,7 +12,7 @@
 
 set -e
 
-PROMOTE_VERSION="2.0.3"
+PROMOTE_VERSION="2.1.0"
 
 # Colors
 RED='\033[0;31m'

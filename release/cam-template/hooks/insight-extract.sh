@@ -1,7 +1,7 @@
 #!/bin/bash
 # ═══════════════════════════════════════════════════════════════════════════════
 # insight-extract.sh - Extract session insights to staging area
-# Version: 2.0.3
+# Version: 2.1.0
 #
 # PURPOSE: Capture valuable session knowledge without polluting curated .ai/ docs
 # TRIGGER: SessionEnd (automatic) or manual invocation
@@ -14,7 +14,7 @@
 
 set -e
 
-INSIGHT_VERSION="2.0.3"
+INSIGHT_VERSION="2.1.0"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # ═══════════════════════════════════════════════════════════════════════════════

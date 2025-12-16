@@ -18,7 +18,7 @@ MAJOR.MINOR.PATCH
 **Every code change increments the patch version by 1.**
 
 ```
-2.0.0 → 2.0.1 → 2.0.2 → 2.0.3 → ...
+2.0.0 → 2.0.1 → 2.0.2 → 2.0.3 → 2.1.0 → ...
 ```
 
 ### What Counts as "Code Change"

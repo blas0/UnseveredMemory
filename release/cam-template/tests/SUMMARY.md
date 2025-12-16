@@ -399,4 +399,4 @@ The framework is production-ready and provides a solid foundation for future tes
 
 **Last Updated:** 2024-12-13
 **Test Framework Version:** 2.1.0
-**CAM Architecture Version:** 2.0.3
+**CAM Architecture Version:** 2.1.0

@@ -18,7 +18,7 @@ Continuous Architectural Memory
 
 <div align="center">
     
-![N](https://img.shields.io/badge/CAM-v2.0.3-ffd745?logo=python)
+![N](https://img.shields.io/badge/CAM-v2.1.0-ffd745?logo=python)
 
 </div>
 
