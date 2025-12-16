@@ -466,7 +466,7 @@ migrate_all_projects() {
     echo ""
 
     read -p "Migrate all projects? (y/N): " confirm
-    if [[ "${confirm,,}" != "y" ]]; then
+    if [[ "$confirm" != "y" && "$confirm" != "Y" ]]; then
         echo "Migration cancelled."
         return 0
     fi
