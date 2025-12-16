@@ -434,8 +434,8 @@ EOF
     echo ""
     echo "Usage:"
     echo "  • Insights are auto-extracted at session end"
-    echo "  • Review with: ${CYAN}./cam.sh promote-insights${NC}"
-    echo "  • List pending: ${CYAN}./cam.sh promote-insights --list${NC}"
+    echo -e "  • Review with: ${CYAN}./cam.sh promote-insights${NC}"
+    echo -e "  • List pending: ${CYAN}./cam.sh promote-insights --list${NC}"
 }
 
 # ═══════════════════════════════════════════════════════════════════════════════
