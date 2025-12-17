@@ -1,0 +1,39 @@
+# Current Context
+
+> **Last Updated**: {{DATE}}
+> **Branch**: {{BRANCH}}
+
+## Active Work
+
+**Current Task**: [What you're currently working on]
+
+**Status**: [In progress / Blocked / Ready for review]
+
+**Files Modified**:
+- [List key files being modified]
+
+## Recently Completed
+
+- [{{DATE}}] [Recent completed item]
+
+## Pending / Blocked
+
+- **Pending**: [Tasks waiting to be done]
+- **Blocked**: [Tasks blocked on something - note what]
+
+## Context for Next Session
+
+[Important context the next session needs to know:
+- Where you left off
+- Any half-finished work
+- Key decisions made
+- Gotchas discovered]
+
+## Related Patterns
+
+- See `.ai/patterns/` for established patterns
+- Reference `decisions.md` for architectural context
+
+---
+
+*Keep this file under 200 lines. Move old context to `sessions/YYYY-MM-DD.md` if needed.*
