@@ -1,0 +1,52 @@
+# {{PROJECT_NAME}} - Claude Instructions
+
+> **Maintaining Instructions**: See [.ai/meta/sync-guide.md](.ai/meta/sync-guide.md) for guidelines.
+
+## Documentation Hub
+
+**Entry Point**: `.ai/README.md`
+
+| Topic | Location |
+|-------|----------|
+| Overview | `.ai/README.md` |
+| Architecture | `.ai/core/application-architecture.md` |
+| Tech Stack | `.ai/core/technology-stack.md` |
+| Workflow | `.ai/development/development-workflow.md` |
+| Testing | `.ai/development/testing-patterns.md` |
+| Patterns | `.ai/patterns/` |
+
+## Memory System
+
+- **Current State**: `.claude/memory/context.md` (read at start, update at end)
+- **Decision Log**: `.claude/memory/decisions.md` (append-only)
+- **Session History**: `.claude/memory/sessions/` (optional daily notes)
+
+## Project Policies
+
+### Documentation
+- **Sources of truth**: `.ai/` (static) + `.claude/memory/` (dynamic)
+- **Single location**: Each fact in ONE place
+- **Cross-reference**: Never duplicate
+- **Version numbers**: ONLY in `.ai/core/technology-stack.md`
+
+## Completion Protocol
+
+When work is complete, **always** finish with:
+
+1. **Commit** changes with descriptive message (conventional commits)
+2. **Push** to remote branch
+3. **Create PR** with summary and test plan
+4. **Report** PR URL to user
+
+## Project-Specific Notes
+
+<!-- Add project-specific commands, conventions, gotchas below -->
+
+**Commands:**
+- Run tests: `[command]`
+- Build: `[command]`
+- Lint: `[command]`
+
+---
+
+*Claude reads `.ai/` for documentation. Memory hooks provide session continuity.*

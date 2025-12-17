@@ -1,0 +1,36 @@
+# Session Notes - {{DATE}}
+
+## Summary
+
+[One-paragraph summary of what was accomplished this session]
+
+## Work Completed
+
+1. **[Feature/Task Name]** (`path/to/files`)
+   - [What was done]
+   - [Key changes]
+
+## Decisions Made
+
+- [Decision 1 - brief, add to decisions.md if architectural]
+- [Decision 2]
+
+## Pending
+
+- [Task not completed - why]
+- [Item to follow up on]
+
+## Insights
+
+- [Interesting discovery or learning]
+- [Gotcha encountered]
+- [Performance observation]
+
+## Files Modified
+
+- `path/to/file1.ts` - [what changed]
+- `path/to/file2.ts` - [what changed]
+
+## Next Session
+
+[What to continue with next time]
