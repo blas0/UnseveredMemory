@@ -1,6 +1,7 @@
 # Local development directories
 /.ai/*
 /.claude/*
+!/.claude/agents/
 /.cursor/*
 /sandbox/*
 

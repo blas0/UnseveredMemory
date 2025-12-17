@@ -10,6 +10,11 @@ A markdown-based memory system for Claude Code. Zero dependencies. Zero latency.
 
 </div>
 
+## Changelog
+
+**12-17-25:**
+- Integrated `orchestrator.md` agent into global setup script
+
 ## Overview
 
 Unsevered Memory provides cross-session continuity for Claude Code by leveraging its built-in hooks system:

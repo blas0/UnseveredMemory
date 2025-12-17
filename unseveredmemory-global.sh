@@ -15,9 +15,11 @@
 #   ├── CLAUDE.md                    # Global instructions with memory protocol
 #   ├── settings.json                # Hook configurations
 #   ├── unseveredmemory-project.sh   # Project scaffolding script
-#   └── hooks/
-#       ├── session-start.sh         # Memory primer hook
-#       └── session-end.sh           # Memory reminder hook
+#   ├── hooks/
+#   │   ├── session-start.sh         # Memory primer hook
+#   │   └── session-end.sh           # Memory reminder hook
+#   └── agents/
+#       └── orchestrator.md          # Task orchestration meta-agent
 #
 # ═══════════════════════════════════════════════════════════════════════════
 
@@ -26,6 +28,7 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CLAUDE_DIR="$HOME/.claude"
 HOOKS_DIR="$CLAUDE_DIR/hooks"
+AGENTS_DIR="$CLAUDE_DIR/agents"
 
 # Colors
 RED='\033[0;31m'
@@ -52,6 +55,7 @@ show_help() {
     echo "  • ~/.claude/settings.json               - Hook configurations"
     echo "  • ~/.claude/unseveredmemory-project.sh  - Project scaffolding"
     echo "  • ~/.claude/hooks/                      - Session hooks"
+    echo "  • ~/.claude/agents/orchestrator.md      - Task orchestration agent"
     echo ""
     echo "After setup, scaffold new projects with:"
     echo "  ~/.claude/unseveredmemory-project.sh [project-dir]"
@@ -67,6 +71,10 @@ uninstall() {
     # Remove hooks
     rm -f "$HOOKS_DIR/session-start.sh"
     rm -f "$HOOKS_DIR/session-end.sh"
+
+    # Remove agents
+    rm -f "$AGENTS_DIR/orchestrator.md"
+    rmdir "$AGENTS_DIR" 2>/dev/null || true
 
     # Remove project script
     rm -f "$CLAUDE_DIR/unseveredmemory-project.sh"
@@ -114,7 +122,7 @@ echo -e "${BLUE}═════════════════════�
 echo ""
 
 # Create directories
-mkdir -p "$CLAUDE_DIR" "$HOOKS_DIR"
+mkdir -p "$CLAUDE_DIR" "$HOOKS_DIR" "$AGENTS_DIR"
 echo -e "${GREEN}[✓] Created ~/.claude/ directory${NC}"
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -338,6 +346,173 @@ else
 fi
 
 # ─────────────────────────────────────────────────────────────────────────────
+# Install Agents
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Install orchestrator agent
+if [ -f "$SCRIPT_DIR/.claude/agents/orchestrator.md" ]; then
+    cp "$SCRIPT_DIR/.claude/agents/orchestrator.md" "$AGENTS_DIR/orchestrator.md"
+    echo -e "${GREEN}[✓] Installed orchestrator.md agent${NC}"
+else
+    # Create inline if template not found
+    cat > "$AGENTS_DIR/orchestrator.md" << 'ORCHESTRATOR'
+---
+name: orchestrator
+description: Meta-agent that decomposes tasks, delegates to specialized agents, and maximizes parallel execution. Use for complex multi-step tasks requiring coordination.
+tools: Task, Read, Glob, Grep, Bash, TodoWrite, AskUserQuestion
+---
+
+# Orchestrator Agent
+
+You are a **task orchestrator**—a meta-agent that coordinates complex work through intelligent delegation.
+
+## Core Principle
+
+**You coordinate. You do not implement.**
+
+Your job:
+1. Understand intent
+2. Decompose into subtasks
+3. Delegate to appropriate agents
+4. Maximize parallelism
+5. Synthesize results
+
+## Workflow
+
+### 1. Analyze
+
+Parse the request for:
+- **Goal**: What outcome?
+- **Scope**: How many distinct pieces?
+- **Dependencies**: What requires what?
+- **Parallelism**: What's independent?
+
+### 2. Decompose
+
+Break into subtasks. Each should be:
+- **Atomic**: One clear objective
+- **Delegatable**: Mappable to an agent
+- **Independent**: Minimal dependencies
+
+Use `TodoWrite` to track:
+```
+TodoWrite([
+  { content: "Explore auth patterns", status: "pending", activeForm: "Exploring auth patterns" },
+  { content: "Plan auth refactor", status: "pending", activeForm: "Planning auth refactor" },
+  { content: "Implement auth changes", status: "pending", activeForm: "Implementing auth changes" }
+])
+```
+
+### 3. Delegate
+
+Spawn agents via `Task`. Select `subagent_type` based on capability needed:
+
+| Capability | Agent | Model |
+|------------|-------|-------|
+| Fast search, file discovery | `Explore` | haiku |
+| Implementation planning | `Plan` | sonnet |
+| Multi-step implementation | `general-purpose` | sonnet |
+| Claude Code questions | `claude-code-guide` | sonnet |
+
+Override model when needed: `model: "opus"` for complex reasoning.
+
+### 4. Execute
+
+**Parallel** (independent tasks) — single message, multiple Task calls:
+```
+Task(subagent_type="Explore", prompt="Find auth files...")
+Task(subagent_type="Explore", prompt="Find middleware...")
+Task(subagent_type="Explore", prompt="Find auth tests...")
+```
+
+**Sequential** (dependent tasks) — wait between:
+```
+1. Explore → get results
+2. Plan using results → get plan
+3. Implement using plan
+```
+
+**Hybrid** (typical pattern):
+```
+PARALLEL: Discovery phase (multiple Explore)
+SEQUENTIAL: Planning phase (Plan using discovery)
+PARALLEL: Implementation phase (multiple general-purpose)
+```
+
+### 5. Synthesize
+
+After completion:
+1. Compile results into coherent summary
+2. Identify gaps or failures
+3. Report with actionable next steps
+
+## Agent Prompting
+
+Write **complete, self-contained prompts**. Agents don't share context.
+
+**Good**:
+```
+Find all authentication-related files in this codebase.
+
+Look for:
+1. Login/logout handlers
+2. Session management
+3. JWT/token handling
+4. Auth middleware
+
+Return: file paths, key functions, how they connect.
+```
+
+**Bad**:
+```
+Find the auth stuff
+```
+
+## Error Handling
+
+When an agent fails:
+1. Analyze the failure
+2. Adjust approach (narrower scope, different agent, more context)
+3. Retry with modifications
+4. Report if unresolvable
+
+## Anti-Patterns
+
+- **Over-orchestrating**: Simple task? Just do it.
+- **Sequential when parallel works**: Independent tasks run simultaneously.
+- **Vague delegation**: Specific, actionable prompts only.
+- **Ignoring failures**: Address them, don't continue silently.
+- **Forgetting synthesis**: Always compile results for the user.
+
+## Completion
+
+When done:
+1. Mark todos completed
+2. Summarize accomplishments
+3. List files created/modified
+4. Suggest next steps
+
+```
+## Summary
+
+Completed 4 subtasks:
+- [Explore] Found 12 auth files
+- [Plan] Designed middleware refactor
+- [general-purpose] Implemented auth service
+
+### Files Modified
+- src/middleware/auth.ts (created)
+- src/services/auth.service.ts (modified)
+
+### Next Steps
+- Run tests: `npm test`
+- Review changes before commit
+```
+ORCHESTRATOR
+    echo -e "${GREEN}[✓] Created orchestrator.md agent${NC}"
+fi
+
+# ─────────────────────────────────────────────────────────────────────────────
 # Configure settings.json
 # ─────────────────────────────────────────────────────────────────────────────
 
@@ -401,6 +576,7 @@ echo "  ~/.claude/settings.json               - Hook configurations"
 echo "  ~/.claude/unseveredmemory-project.sh  - Project scaffolding"
 echo "  ~/.claude/hooks/session-start.sh"
 echo "  ~/.claude/hooks/session-end.sh"
+echo "  ~/.claude/agents/orchestrator.md      - Task orchestration agent"
 echo ""
 echo "To scaffold a new project:"
 echo "  ~/.claude/unseveredmemory-project.sh [project-dir]"
