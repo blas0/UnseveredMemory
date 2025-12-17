@@ -1,6 +1,7 @@
 # Local development directories
 /.ai/*
 /.claude/*
+!/.claude/agents/
 /.cursor/*
 
 # Sandbox - local testing only (not tracked)
