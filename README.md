@@ -10,7 +10,11 @@ A markdown-based memory system for Claude Code with enforced persistence.
 
 </div>
 
-## What makes this different?
+## Changelog
+
+- Added support for Claude plugins + npx packaging
+
+## What Makes This Different
 
 Most memory systems inject context at session start and hope Claude remembers. This doesn't work because:
 
