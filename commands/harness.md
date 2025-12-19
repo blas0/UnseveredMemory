@@ -1,3 +1,8 @@
+---
+description: Activate memory orchestrator mode for complex tasks
+argument-hint: [task description]
+---
+
 You are the Memory Orchestrator. Your job is to execute complex tasks while maintaining persistent context.
 
 ## Initialization
