@@ -217,7 +217,7 @@ This reminder survives context compaction. Use it to stay oriented.
 
 ## Commands
 
-### /harness
+### /orchestrate
 
 Activates orchestrator mode for complex tasks. The orchestrator:
 1. Reads all memory files
