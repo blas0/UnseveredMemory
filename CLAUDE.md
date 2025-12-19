@@ -36,6 +36,6 @@ See `.ai/core/architecture.md` for system design.
 
 ## Memory
 
-This project uses Unsevered Memory. See:
+This project uses UnseveredMemory. See:
 - `.claude/memory/` for session state
 - `.ai/` for patterns and architecture
