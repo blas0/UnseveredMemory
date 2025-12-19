@@ -1,32 +1,31 @@
-# Architectural Decisions
+# Decision Log
 
-> **Append new decisions at the bottom. Don't modify old entries.**
-
-This log tracks significant architectural and design decisions for this project. Each entry captures the context, reasoning, and alternatives considered at the time of decision.
+Architectural and significant decisions for this project.
 
 ---
 
-<!-- Template for new entries:
+## Template
 
-## [YYYY-MM-DD] Decision Title
+When logging a decision, use this format:
 
-**Context**: Why this decision was needed
+```markdown
+## YYYY-MM-DD: [Decision Title]
 
-**Decision**: What was decided
+**Context**: Why was this decision needed?
 
-**Reasoning**:
-- Key point 1
-- Key point 2
+**Options Considered**:
+1. Option A - pros/cons
+2. Option B - pros/cons
 
-**Alternatives Considered**:
-1. **[Alternative A]** - [Why rejected]
-2. **[Alternative B]** - [Why rejected]
+**Decision**: What was chosen
 
-**Consequences**:
-- [Impact of this decision]
+**Rationale**: Why this option was selected
 
-**References**: [Links to relevant docs or patterns]
+**Consequences**: What this means going forward
+```
 
 ---
 
--->
+## Decisions
+
+[Decisions will be appended below]

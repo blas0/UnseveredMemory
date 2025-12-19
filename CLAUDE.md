@@ -39,7 +39,3 @@ See `.ai/core/architecture.md` for system design.
 This project uses Unsevered Memory. See:
 - `.claude/memory/` for session state
 - `.ai/` for patterns and architecture
-
-## Notes
-
-[Project-specific notes for Claude]

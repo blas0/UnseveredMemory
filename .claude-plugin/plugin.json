@@ -1,0 +1,15 @@
+{
+  "name": "unsevered-memory",
+  "version": "2.0.0",
+  "description": "Persistent memory system for Claude Code with enforced context",
+  "author": {
+    "name": "blas0",
+    "url": "https://github.com/blas0"
+  },
+  "repository": "https://github.com/blas0/UnseveredMemory",
+  "license": "MIT",
+  "keywords": ["memory", "context", "persistence", "hooks", "claude-code"],
+  "hooks": "./hooks/hooks.json",
+  "commands": ["./commands/harness.md"],
+  "skills": "./skills/"
+}
