@@ -10,6 +10,6 @@
   "license": "MIT",
   "keywords": ["memory", "context", "persistence", "hooks", "claude-code"],
   "hooks": "./hooks/hooks.json",
-  "commands": ["./commands/harness.md"],
+  "commands": ["./commands/orchestrate.md"],
   "skills": "./skills/"
 }

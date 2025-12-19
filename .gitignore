@@ -22,3 +22,4 @@ Thumbs.db
 
 # Unsevered Memory
 .claude/memory/scratchpad.md
+node_modules/
