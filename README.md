@@ -4,13 +4,17 @@
 
 # Unsevered Memory
 
-![Claude Code](https://img.shields.io/badge/Claude_Code-Hooks-d97757?logo=anthropic) ![Bash](https://img.shields.io/badge/Bash-Scripts-4EAA25?logo=gnubash&logoColor=white) ![Markdown](https://img.shields.io/badge/Markdown-Docs-000000?logo=markdown)
+![Claude Code](https://img.shields.io/badge/Claude_Code-Hooks-d97757?logo=anthropic) ![Bash](https://img.shields.io/badge/Bash-Scripts-4EAA25?logo=gnubash&logoColor=white) ![Markdown](https://img.shields.io/badge/Markdown-Docs-000000?logo=markdown) ![npm](https://img.shields.io/badge/npm-Package-CB3837?logo=npm)
 
 A markdown-based memory system for Claude Code with enforced persistence.
 
 Zero dependencies. Zero latency. Works offline.
 
 </div>
+
+## Changelog
+
+- Added support for Claude plugins + npx packaging
 
 ## What Makes This Different
 
@@ -53,7 +57,36 @@ File Structure
 
 ## Installation
 
-### Step 1: Global Setup (Once)
+Choose your preferred method:
+
+### Option A: Claude Plugin (Recommended)
+
+```bash
+# Add marketplace
+/plugin marketplace add blas0/UnseveredMemory
+
+# Install plugin
+/plugin install unsevered-memory@blas0
+```
+
+Then per-project:
+```bash
+cd /path/to/your/project
+/unsevered-memory project
+```
+
+### Option B: npx
+
+```bash
+# Global setup
+npx unsevered-memory init
+
+# Per-project setup
+cd /path/to/your/project
+npx unsevered-memory project
+```
+
+### Option C: Manual
 
 ```bash
 git clone https://github.com/blas0/UnseveredMemory.git
@@ -61,22 +94,22 @@ cd UnseveredMemory
 ./setup-global.sh
 ```
 
-Installs to `~/.claude/`:
-- `CLAUDE.md` - Global memory protocol
-- `settings.json` - Hook configuration (3 hooks)
-- `hooks/` - memory-load, memory-remind, memory-save
-- `skills/harness/` - Workflow instructions
-- `commands/harness.md` - Orchestrator command
-- `setup-project.sh` - Project scaffolding
-
-### Step 2: Project Setup (Per Project)
-
+Then per-project:
 ```bash
 cd /path/to/your/project
 ~/.claude/setup-project.sh
 ```
 
-Creates:
+### What Gets Installed
+
+**Global** (`~/.claude/`):
+- `CLAUDE.md` - Global memory protocol
+- `settings.json` - Hook configuration (3 hooks)
+- `hooks/` - memory-load, memory-remind, memory-save
+- `skills/harness/` - Workflow instructions
+- `commands/harness.md` - Orchestrator command
+
+**Per-Project**:
 ```
 project/
 ├── CLAUDE.md               # Project instructions
@@ -92,13 +125,6 @@ project/
         ├── scratchpad.md   # Live session log
         ├── decisions.md    # Decision log
         └── sessions/       # Daily archives
-```
-
-### Step 3: Use Claude Code
-
-```bash
-claude
-# Memory loads automatically. Reminder appears on every prompt.
 ```
 
 ## Workflow
@@ -162,24 +188,22 @@ The orchestrator:
 
 ```
 UnseveredMemory/
-├── README.md
-├── setup-global.sh           # Global installer
-├── hooks/
-│   ├── memory-load.sh        # SessionStart
-│   ├── memory-remind.sh      # UserPromptSubmit (enforcer)
-│   └── memory-save.sh        # SessionEnd
+├── .claude-plugin/           # Plugin manifest
+│   ├── plugin.json
+│   └── marketplace.json
+├── package.json              # npm package
+├── bin/cli.js                # npx entry point
+├── src/commands/             # CLI commands
+├── setup-global.sh           # Manual installer
+├── scripts/                  # Hook scripts (plugin)
+├── hooks/                    # Hook scripts + hooks.json
 ├── skills/
 │   └── harness/
-│       └── SKILL.md          # Workflow instructions
+│       └── SKILL.md
 ├── commands/
-│   └── harness.md            # /harness orchestrator
+│   └── harness.md
 └── templates/
-    ├── CLAUDE.md.template
-    ├── PROJECT-CLAUDE.md.template
-    ├── context.md.template
-    ├── decisions.md.template
-    ├── scratchpad.md.template
-    └── .ai/                  # Documentation templates
+    └── [all templates]
 ```
 
 ## Philosophy
@@ -192,24 +216,25 @@ UnseveredMemory/
 
 ## Enforcement Levels
 
-| Approach | Reliability | This System |
-|----------|-------------|-------------|
-| CLAUDE.md only | ~30% | Base |
-| + SessionStart | ~50% | Included |
-| + UserPromptSubmit | ~75% | Included |
-| + /harness orchestrator | ~95% | Available |
+| Approach | Reliability |
+|----------|-------------|
+| CLAUDE.md only | ~30% |
+| + SessionStart | ~50% |
+| + UserPromptSubmit | ~75% |
+| + /harness orchestrator | ~95% |
 
 ## Uninstall
 
 ```bash
-# Remove global installation
+# npx
+npx unsevered-memory uninstall
+
+# Manual
 rm -rf ~/.claude/hooks/memory-*.sh
 rm -rf ~/.claude/skills/harness
 rm -rf ~/.claude/commands/harness.md
-rm ~/.claude/setup-project.sh
-# Restore settings.json manually
 
-# Remove from project
+# Project files (optional)
 rm -rf .claude/memory
 rm -rf .ai
 ```
