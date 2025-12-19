@@ -523,6 +523,19 @@ echo "  1. Edit CLAUDE.md with project details"
 echo "  2. Fill in .ai/core/ with project info"
 echo "  3. Run 'claude' to start working"
 echo ""
+echo ""
+echo -e "${BLUE}==========================================${NC}"
+echo -e "${BLUE}  Bootstrap Prompt${NC}"
+echo -e "${BLUE}==========================================${NC}"
+echo ""
+echo "To initialize this project with comprehensive documentation:"
+echo ""
+cat << 'BOOTSTRAP_PROMPT'
+Conduct a comprehensive documentation audit and integration project for this codebase by systematically analyzing, organizing, and consolidating all text-based materials into the existing @.ai/ folder documentation framework. Begin by thoroughly examining the current @.ai/ folder structure to understand the existing documentation system, including what files are present, how information is organized, and where specific types of content should be appended or integrated. Next, perform an in-depth analysis of the project's actual codebase, treating the working code as the authoritative source of truth about functionality, architecture, and purpose, then use these insights to enhance and complete the @.ai/ documentation system with accurate technical specifications and operational context. Following the code analysis, systematically search throughout the entire project directory to locate and catalog all documentation-related files and folders, including .txt, .md, .pdf documents, research materials, diagnostic reports, project plans, notes, and any other relevant documentation (excluding claude.md). Once all documentation materials have been identified, carefully review their contents and strategically append the relevant information to the appropriate corresponding files within the established @.ai/ folder system, ensuring that data is integrated logically without creating new files or folders. After completing the integration process, create a new folder named "olddoccontext" in the project root directory and relocate all the original documentation files and folders that were processed during the audit, effectively centralizing these materials while maintaining the enhanced @.ai/ documentation system as the primary source of project information. Throughout this entire process, utilize the @agent-orchestrator tool to maximize efficiency and ensure systematic completion of each phase, ultimately delivering a comprehensive, well-organized documentation framework that accurately captures all technical specifications, operational contexts, and project details within the existing @.ai/ folder structure.
+BOOTSTRAP_PROMPT
+echo ""
+echo "Run this in your project with: /orchestrate"
+echo ""
 PROJECT_SETUP
 
 chmod +x "$CLAUDE_DIR/setup-project.sh"
