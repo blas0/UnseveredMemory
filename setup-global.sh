@@ -40,7 +40,7 @@ print_header
 # 1. Create ~/.claude/ directory structure
 print_step "Creating ~/.claude/ directory structure..."
 mkdir -p "$CLAUDE_DIR/hooks"
-mkdir -p "$CLAUDE_DIR/skills/harness"
+mkdir -p "$CLAUDE_DIR/skills/orchestrate"
 mkdir -p "$CLAUDE_DIR/commands"
 print_success "Directory structure created"
 
@@ -54,12 +54,12 @@ print_success "Hooks installed (memory-load, memory-remind, memory-save)"
 
 # 3. Install skill
 print_step "Installing harness skill..."
-cp "$SCRIPT_DIR/skills/harness/SKILL.md" "$CLAUDE_DIR/skills/harness/"
+cp "$SCRIPT_DIR/skills/orchestrate/SKILL.md" "$CLAUDE_DIR/skills/orchestrate/"
 print_success "Skill installed"
 
 # 4. Install command
-print_step "Installing /harness command..."
-cp "$SCRIPT_DIR/commands/harness.md" "$CLAUDE_DIR/commands/"
+print_step "Installing /orchestrate command..."
+cp "$SCRIPT_DIR/commands/orchestrate.md" "$CLAUDE_DIR/commands/"
 print_success "Command installed"
 
 # 5. Configure settings.json (MERGE, don't overwrite)
@@ -541,10 +541,10 @@ echo "  - hooks/"
 echo "      - memory-load.sh     (SessionStart)"
 echo "      - memory-remind.sh   (UserPromptSubmit)"
 echo "      - memory-save.sh     (SessionEnd)"
-echo "  - skills/harness/"
+echo "  - skills/orchestrate/"
 echo "      - SKILL.md           (workflow instructions)"
 echo "  - commands/"
-echo "      - harness.md         (/harness orchestrator)"
+echo "      - harness.md         (/orchestrate orchestrator)"
 echo "  - setup-project.sh   (per-project setup)"
 echo ""
 echo "To add memory to a project:"
@@ -552,5 +552,5 @@ echo "  cd /path/to/project"
 echo "  ~/.claude/setup-project.sh"
 echo ""
 echo "To use orchestrator mode:"
-echo "  /harness [task description]"
+echo "  /orchestrate [task description]"
 echo ""
