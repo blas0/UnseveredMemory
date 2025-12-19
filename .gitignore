@@ -3,6 +3,8 @@
 /.claude/*
 !/.claude/agents/
 /.cursor/*
+
+# Sandbox - local testing only (not tracked)
 /sandbox/*
 
 # Python
