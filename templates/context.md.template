@@ -1,39 +1,29 @@
-# Current Context
+# Project Context
 
-> **Last Updated**: {{DATE}}
-> **Branch**: {{BRANCH}}
+## Current State
 
-## Active Work
+[What is the current state of the project/feature?]
 
-**Current Task**: [What you're currently working on]
+## Current Task
 
-**Status**: [In progress / Blocked / Ready for review]
+[What are we working on right now?]
 
-**Files Modified**:
-- [List key files being modified]
+## Last Session
 
-## Recently Completed
+- Date: [YYYY-MM-DD]
+- Accomplished: [summary of what was done]
+- Stopped at: [where we left off]
 
-- [{{DATE}}] [Recent completed item]
+## Next Steps
 
-## Pending / Blocked
+1. [First thing to do]
+2. [Second thing to do]
+3. [Third thing to do]
 
-- **Pending**: [Tasks waiting to be done]
-- **Blocked**: [Tasks blocked on something - note what]
+## Active Branches
 
-## Context for Next Session
+- [branch-name] - [purpose]
 
-[Important context the next session needs to know:
-- Where you left off
-- Any half-finished work
-- Key decisions made
-- Gotchas discovered]
+## Notes
 
-## Related Patterns
-
-- See `.ai/patterns/` for established patterns
-- Reference `decisions.md` for architectural context
-
----
-
-*Keep this file under 200 lines. Move old context to `sessions/YYYY-MM-DD.md` if needed.*
+[Any context the next session needs to know]

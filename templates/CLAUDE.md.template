@@ -1,0 +1,74 @@
+# Global Claude Instructions
+
+## Memory Protocol
+
+For projects with `.claude/memory/`:
+
+### Session Start
+- Memory loads automatically via hook
+- Review context.md for current state
+- Check scratchpad.md for unfinished work
+- Reference .ai/ for patterns and architecture
+
+### During Session
+- Write operations to scratchpad.md as you work
+- Update .ai/ when patterns emerge (3+ uses)
+- Update .ai/core/ when architecture changes
+- Log decisions that affect project direction
+
+### Session End
+- Hook archives scratchpad automatically
+- Update context.md with current state
+- Append architectural decisions to decisions.md
+
+## Documentation Protocol
+
+### Two Sources of Truth
+
+| Location | Type | Content |
+|----------|------|---------|
+| `.ai/` | Static | Architecture, patterns, workflows |
+| `.claude/memory/` | Dynamic | Context, decisions, sessions |
+
+### When to Update .ai/
+
+| Trigger | Location |
+|---------|----------|
+| Pattern used 3+ times | `.ai/patterns/` |
+| Architecture change | `.ai/core/architecture.md` |
+| Stack change | `.ai/core/technology-stack.md` |
+| Workflow improvement | `.ai/workflows/` |
+
+### Rules
+- Each fact exists in ONE location
+- Cross-reference, never duplicate
+- Version numbers ONLY in `.ai/core/technology-stack.md`
+
+## File Reference
+
+| Topic | Location |
+|-------|----------|
+| Current state | `.claude/memory/context.md` |
+| Session log | `.claude/memory/scratchpad.md` |
+| Decisions | `.claude/memory/decisions.md` |
+| Archives | `.claude/memory/sessions/` |
+| Patterns | `.ai/patterns/` |
+| Architecture | `.ai/core/` |
+| Tech stack | `.ai/core/technology-stack.md` |
+
+## Completion Protocol
+
+When work is complete:
+
+1. Update context.md with current state
+2. Commit changes with descriptive message
+3. Push to remote branch
+4. Create PR with summary
+5. Report PR URL to user
+
+## Enforcement
+
+The UserPromptSubmit hook displays memory state on every prompt.
+Use this reminder to stay oriented during long sessions.
+
+For complex multi-step tasks, use `/harness` to activate orchestrator mode.

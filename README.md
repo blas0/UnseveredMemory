@@ -4,144 +4,212 @@
 
 # Unsevered Memory
 
-![Claude Code](https://img.shields.io/badge/Claude_Code-Hooks-d97757?logo=anthropic) ![Bash](https://img.shields.io/badge/Bash-Scripts-4EAA25?logo=gnubash&logoColor=white) ![Markdown](https://img.shields.io/badge/Markdown-Docs-000000?logo=markdown) ![jq](https://img.shields.io/badge/jq-JSON-CB171E)
+![Claude Code](https://img.shields.io/badge/Claude_Code-Hooks-d97757?logo=anthropic) ![Bash](https://img.shields.io/badge/Bash-Scripts-4EAA25?logo=gnubash&logoColor=white) ![Markdown](https://img.shields.io/badge/Markdown-Docs-000000?logo=markdown)
 
-A markdown-based memory system for Claude Code. Zero dependencies. Zero latency. Works offline.
+A markdown-based memory system for Claude Code with enforced persistence.
+
+Zero dependencies. Zero latency. Works offline.
 
 </div>
 
-## Changelog
+## What Makes This Different
 
-**12-17-25:**
-- Integrated `orchestrator.md` agent into global setup script
+Most memory systems inject context at session start and hope Claude remembers. This doesn't work because:
 
-## Overview
+1. Context compaction loses early instructions
+2. Claude has no obligation to follow suggestions
+3. Long sessions forget the protocol
 
-Unsevered Memory provides cross-session continuity for Claude Code by leveraging its built-in hooks system:
+**Unsevered Memory solves this with enforcement:**
 
-1. **`.ai/`** - Static documentation (architecture, patterns, workflows)
-2. **`.claude/memory/`** - Dynamic memory (context, decisions, sessions)
+| Hook | When | Purpose |
+|------|------|---------|
+| `SessionStart` | Session begins | Load full context |
+| `UserPromptSubmit` | Every prompt | Inject state reminder |
+| `SessionEnd` | Session ends | Archive + remind |
 
-This is Claude Code using its native features organically. No external APIs, no databases, just markdown files and shell hooks.
+The `UserPromptSubmit` hook survives context compaction by being injected fresh on every message.
+
+## Architecture
+
+```
+Enforcement Layer
+├── SessionStart ──────> Load context.md + scratchpad
+├── UserPromptSubmit ──> [Memory] Task: X | Scratchpad: Y lines
+└── SessionEnd ────────> Archive scratchpad, remind to update
+
+File Structure
+├── .claude/memory/     # Dynamic (every session)
+│   ├── context.md      # Current state, next steps
+│   ├── scratchpad.md   # Live session operations
+│   ├── decisions.md    # Architectural choices
+│   └── sessions/       # Daily archives
+│
+└── .ai/                # Static (when patterns emerge)
+    ├── core/           # Tech stack, architecture
+    ├── patterns/       # Reusable solutions (after 3+ uses)
+    └── workflows/      # Dev processes
+```
 
 ## Installation
 
 ### Step 1: Global Setup (Once)
 
 ```bash
-./unseveredmemory-global.sh
+git clone https://github.com/blas0/UnseveredMemory.git
+cd UnseveredMemory
+./setup-global.sh
 ```
 
-This installs to `~/.claude/`:
-- `CLAUDE.md` - Global instructions with memory protocol
-- `settings.json` - Hook configurations
-- `unseveredmemory-project.sh` - Project scaffolding script
-- `hooks/session-start.sh` - Memory primer
-- `hooks/session-end.sh` - Memory reminder
+Installs to `~/.claude/`:
+- `CLAUDE.md` - Global memory protocol
+- `settings.json` - Hook configuration (3 hooks)
+- `hooks/` - memory-load, memory-remind, memory-save
+- `skills/harness/` - Workflow instructions
+- `commands/harness.md` - Orchestrator command
+- `setup-project.sh` - Project scaffolding
 
 ### Step 2: Project Setup (Per Project)
 
 ```bash
-~/.claude/unseveredmemory-project.sh /path/to/your/project
-```
-
-Or from within the project directory:
-```bash
 cd /path/to/your/project
-~/.claude/unseveredmemory-project.sh
+~/.claude/setup-project.sh
 ```
 
-This creates:
+Creates:
 ```
-your-project/
-├── CLAUDE.md                    # Claude Code entry point
-├── .ai/                         # Documentation hub
-│   ├── README.md
+project/
+├── CLAUDE.md               # Project instructions
+├── .ai/                    # Static documentation
 │   ├── core/
 │   │   ├── technology-stack.md
-│   │   ├── project-overview.md
-│   │   ├── application-architecture.md
-│   │   └── deployment-architecture.md
-│   ├── development/
-│   │   ├── development-workflow.md
-│   │   └── testing-patterns.md
+│   │   └── architecture.md
 │   ├── patterns/
-│   │   ├── database-patterns.md
-│   │   ├── frontend-patterns.md
-│   │   ├── security-patterns.md
-│   │   └── api-and-routing.md
-│   └── meta/
-│       ├── maintaining-docs.md
-│       └── sync-guide.md
+│   └── workflows/
 └── .claude/
     └── memory/
-        ├── context.md           # Current state
-        ├── decisions.md         # Decision log
-        └── sessions/            # Daily notes
+        ├── context.md      # Cross-session state
+        ├── scratchpad.md   # Live session log
+        ├── decisions.md    # Decision log
+        └── sessions/       # Daily archives
 ```
 
-## How It Works
+### Step 3: Use Claude Code
 
-Unsevered Memory uses Claude Code's native hooks feature to maintain session continuity:
+```bash
+claude
+# Memory loads automatically. Reminder appears on every prompt.
+```
+
+## Workflow
 
 ### Session Start
-The `session-start.sh` hook automatically reads `.claude/memory/context.md` and injects it as context, so Claude knows where you left off.
+1. Hook loads `context.md` and `scratchpad.md`
+2. Claude sees current state and any unfinished work
+3. Hook hints about `.ai/` documentation
 
-### During Work
-Claude references `.ai/` for architectural documentation and established patterns.
+### During Session
+Every prompt shows:
+```
+[Memory] Task: Fix auth bug | Scratchpad: 24 lines | .ai/ updated: 2024-01-15
+```
+
+Claude writes to `scratchpad.md` as it works:
+```markdown
+## Session: 2024-01-15 14:30
+
+### Operations
+- [14:35] Found issue in validateToken() at src/auth.ts:142
+- [14:40] Fixed: was comparing wrong field
+
+### Decisions
+- Keep backward compatibility by checking both fields
+```
+
+Claude updates `.ai/` when patterns emerge (3+ uses).
 
 ### Session End
-The `session-end.sh` hook reminds Claude to update `.claude/memory/context.md` with current state before the session ends.
+1. Hook archives scratchpad to `sessions/YYYY-MM-DD.md`
+2. Hook reminds to update `context.md`
+3. Claude updates context with current state
 
-## Two Sources of Truth
+## Orchestrator Mode
 
-| Source | Purpose | Updates |
-|--------|---------|---------|
-| `.ai/` | Static documentation | When architecture changes |
-| `.claude/memory/` | Dynamic context | Every session |
+For complex multi-step tasks:
 
-### `.ai/` Structure
-
-- **core/** - Technology stack, architecture, project overview
-- **development/** - Workflows, testing patterns
-- **patterns/** - Code patterns, security, API design
-- **meta/** - Documentation maintenance guides
-
-### `.claude/memory/` Structure
-
-- **context.md** - Current work state, modified files, pending tasks
-- **decisions.md** - Architectural decision log (append-only)
-- **sessions/** - Daily session notes (optional)
-
-## Uninstall
-
-To remove global hooks:
-```bash
-./unseveredmemory-global.sh --uninstall
 ```
+/harness Implement user authentication with JWT
+```
+
+The orchestrator:
+1. Reads all memory files
+2. Breaks task into subtasks
+3. Delegates to specialized agents
+4. Updates memory after each step
+5. Never loses context
+
+## File Purposes
+
+| File | Content | Update Frequency |
+|------|---------|------------------|
+| `context.md` | Current state, next steps | End of session |
+| `scratchpad.md` | Operations, findings | During session |
+| `decisions.md` | Architectural choices | When decisions made |
+| `.ai/core/` | Tech stack, architecture | When they change |
+| `.ai/patterns/` | Reusable solutions | After 3+ uses |
 
 ## Repository Structure
 
 ```
-unsevered-memory/
+UnseveredMemory/
 ├── README.md
-├── unseveredmemory-global.sh    # Global setup script
-├── unseveredmemory-project.sh   # Project setup script
+├── setup-global.sh           # Global installer
 ├── hooks/
-│   ├── session-start.sh         # Memory primer hook
-│   └── session-end.sh           # Memory reminder hook
+│   ├── memory-load.sh        # SessionStart
+│   ├── memory-remind.sh      # UserPromptSubmit (enforcer)
+│   └── memory-save.sh        # SessionEnd
+├── skills/
+│   └── harness/
+│       └── SKILL.md          # Workflow instructions
+├── commands/
+│   └── harness.md            # /harness orchestrator
 └── templates/
-    ├── global-claude.md.template
-    ├── project-claude.md.template
+    ├── CLAUDE.md.template
+    ├── PROJECT-CLAUDE.md.template
     ├── context.md.template
     ├── decisions.md.template
-    └── session.md.template
+    ├── scratchpad.md.template
+    └── .ai/                  # Documentation templates
 ```
 
 ## Philosophy
 
-- **Zero dependencies** - Pure bash + jq (usually pre-installed)
-- **Zero latency** - No API calls, no databases
-- **Works offline** - Everything is local markdown
-- **Organically Claude** - Uses Claude Code's built-in hooks, nothing external
-- **Simple** - ~1,500 lines total, two scripts, done
+- **Enforced** - UserPromptSubmit hook survives context compaction
+- **Simple** - Bash + markdown, no databases, no APIs
+- **Offline** - Everything is local files
+- **Native** - Uses Claude Code's built-in hooks system
+- **Proactive** - Claude updates .ai/ during work, not after
+
+## Enforcement Levels
+
+| Approach | Reliability | This System |
+|----------|-------------|-------------|
+| CLAUDE.md only | ~30% | Base |
+| + SessionStart | ~50% | Included |
+| + UserPromptSubmit | ~75% | Included |
+| + /harness orchestrator | ~95% | Available |
+
+## Uninstall
+
+```bash
+# Remove global installation
+rm -rf ~/.claude/hooks/memory-*.sh
+rm -rf ~/.claude/skills/harness
+rm -rf ~/.claude/commands/harness.md
+rm ~/.claude/setup-project.sh
+# Restore settings.json manually
+
+# Remove from project
+rm -rf .claude/memory
+rm -rf .ai
+```
