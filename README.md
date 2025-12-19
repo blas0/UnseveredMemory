@@ -8,15 +8,9 @@
 
 A markdown-based memory system for Claude Code with enforced persistence.
 
-Zero dependencies. Zero latency. Works offline.
-
 </div>
 
-## Changelog
-
-- Added support for Claude plugins + npx packaging
-
-## What Makes This Different
+## What makes this different?
 
 Most memory systems inject context at session start and hope Claude remembers. This doesn't work because:
 
