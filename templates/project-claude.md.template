@@ -36,9 +36,15 @@ See `.ai/core/architecture.md` for system design.
 
 ## Memory
 
-This project uses Unsevered Memory. See:
+This project uses UnseveredMemory. See:
+- `.claude/memory/MANIFEST.md` for memory index
 - `.claude/memory/` for session state
+- `.claude/memory/checkpoints/` for compaction-preserved context
 - `.ai/` for patterns and architecture
+
+### Memory Conventions
+- Use #tags in scratchpad (e.g., #feature #bugfix #refactor)
+- Tags appear in UserPromptSubmit reminder for context
 
 ## Notes
 

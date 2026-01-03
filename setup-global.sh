@@ -49,8 +49,10 @@ print_step "Installing hooks..."
 cp "$SCRIPT_DIR/hooks/memory-load.sh" "$CLAUDE_DIR/hooks/"
 cp "$SCRIPT_DIR/hooks/memory-remind.sh" "$CLAUDE_DIR/hooks/"
 cp "$SCRIPT_DIR/hooks/memory-save.sh" "$CLAUDE_DIR/hooks/"
+cp "$SCRIPT_DIR/hooks/memory-precompact.sh" "$CLAUDE_DIR/hooks/"
+cp "$SCRIPT_DIR/scripts/memory-manifest.sh" "$CLAUDE_DIR/hooks/"
 chmod +x "$CLAUDE_DIR/hooks/"*.sh
-print_success "Hooks installed (memory-load, memory-remind, memory-save)"
+print_success "Hooks installed (memory-load, memory-remind, memory-save, memory-precompact, memory-manifest)"
 
 # 3. Install skill
 print_step "Installing harness skill..."
@@ -78,6 +80,7 @@ if [ -f "$SETTINGS_FILE" ]; then
         TEMP_FILE=$(mktemp)
         jq '.hooks.SessionStart = [{"matcher": "", "hooks": [{"type": "command", "command": "~/.claude/hooks/memory-load.sh"}]}] |
             .hooks.UserPromptSubmit = [{"matcher": "", "hooks": [{"type": "command", "command": "~/.claude/hooks/memory-remind.sh"}]}] |
+            .hooks.PreCompact = [{"matcher": "", "hooks": [{"type": "command", "command": "~/.claude/hooks/memory-precompact.sh"}]}] |
             .hooks.SessionEnd = [{"matcher": "", "hooks": [{"type": "command", "command": "~/.claude/hooks/memory-save.sh"}]}]' \
             "$SETTINGS_FILE" > "$TEMP_FILE" && mv "$TEMP_FILE" "$SETTINGS_FILE"
         print_success "Merged hooks into existing settings.json"
@@ -92,6 +95,7 @@ if [ -f "$SETTINGS_FILE" ]; then
   "hooks": {
     "SessionStart": [{"matcher": "", "hooks": [{"type": "command", "command": "~/.claude/hooks/memory-load.sh"}]}],
     "UserPromptSubmit": [{"matcher": "", "hooks": [{"type": "command", "command": "~/.claude/hooks/memory-remind.sh"}]}],
+    "PreCompact": [{"matcher": "", "hooks": [{"type": "command", "command": "~/.claude/hooks/memory-precompact.sh"}]}],
     "SessionEnd": [{"matcher": "", "hooks": [{"type": "command", "command": "~/.claude/hooks/memory-save.sh"}]}]
   }
 }
@@ -105,6 +109,7 @@ else
   "hooks": {
     "SessionStart": [{"matcher": "", "hooks": [{"type": "command", "command": "~/.claude/hooks/memory-load.sh"}]}],
     "UserPromptSubmit": [{"matcher": "", "hooks": [{"type": "command", "command": "~/.claude/hooks/memory-remind.sh"}]}],
+    "PreCompact": [{"matcher": "", "hooks": [{"type": "command", "command": "~/.claude/hooks/memory-precompact.sh"}]}],
     "SessionEnd": [{"matcher": "", "hooks": [{"type": "command", "command": "~/.claude/hooks/memory-save.sh"}]}]
   }
 }
@@ -174,6 +179,7 @@ echo ""
 # 1. Create .claude/memory/ structure
 print_step "Creating .claude/memory/ structure..."
 mkdir -p "$PROJECT_DIR/.claude/memory/sessions"
+mkdir -p "$PROJECT_DIR/.claude/memory/checkpoints"
 
 # Create memory files from templates or defaults
 if [ ! -f "$PROJECT_DIR/.claude/memory/context.md" ]; then
@@ -512,6 +518,7 @@ echo "    - context.md      (cross-session state)"
 echo "    - scratchpad.md   (live session log)"
 echo "    - decisions.md    (architectural decisions)"
 echo "    - sessions/       (daily archives)"
+echo "    - checkpoints/    (compaction saves)"
 echo ""
 echo "  .ai/"
 echo "    - core/           (tech stack, architecture)"
@@ -553,7 +560,9 @@ echo "  - settings.json      (hook configuration)"
 echo "  - hooks/"
 echo "      - memory-load.sh     (SessionStart)"
 echo "      - memory-remind.sh   (UserPromptSubmit)"
+echo "      - memory-precompact.sh (PreCompact)"
 echo "      - memory-save.sh     (SessionEnd)"
+echo "      - memory-manifest.sh (MANIFEST generator)"
 echo "  - skills/orchestrate/"
 echo "      - SKILL.md           (workflow instructions)"
 echo "  - commands/"

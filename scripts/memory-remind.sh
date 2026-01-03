@@ -36,7 +36,32 @@ if [ -d ".ai" ]; then
     fi
 fi
 
-# Output single-line state reminder
+# Extract active tags from scratchpad (hashtags)
+TAGS=""
+if [ -f "$MEMORY_DIR/scratchpad.md" ]; then
+    TAGS=$(grep -oE '#[a-zA-Z0-9_-]+' "$MEMORY_DIR/scratchpad.md" 2>/dev/null | sort -u | tr '\n' ' ' | sed 's/ $//')
+fi
+
+# Check for checkpoints (context was compacted)
+CHECKPOINT_COUNT=0
+if [ -d "$MEMORY_DIR/checkpoints" ]; then
+    CHECKPOINT_COUNT=$(find "$MEMORY_DIR/checkpoints" -name "*.md" 2>/dev/null | wc -l | tr -d ' ')
+fi
+
+# Build output line
+OUTPUT="[Memory] Task: $TASK | Scratchpad: ${SCRATCH_LINES} lines | .ai/ updated: $AI_UPDATED"
+
+# Add tags if present
+if [ -n "$TAGS" ]; then
+    OUTPUT="$OUTPUT | Tags: $TAGS"
+fi
+
+# Warn if checkpoints exist (context was compacted)
+if [ "$CHECKPOINT_COUNT" -gt 0 ]; then
+    OUTPUT="$OUTPUT | Checkpoints: $CHECKPOINT_COUNT"
+fi
+
+# Output state reminder
 echo ""
-echo "[Memory] Task: $TASK | Scratchpad: ${SCRATCH_LINES} lines | .ai/ updated: $AI_UPDATED"
+echo "$OUTPUT"
 echo ""

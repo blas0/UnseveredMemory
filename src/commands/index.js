@@ -57,7 +57,7 @@ function init() {
   // Copy hooks
   log('step', 'Installing hooks...');
   const hooksDir = path.join(PACKAGE_ROOT, 'scripts');
-  ['memory-load.sh', 'memory-remind.sh', 'memory-save.sh'].forEach(hook => {
+  ['memory-load.sh', 'memory-remind.sh', 'memory-save.sh', 'memory-precompact.sh', 'memory-manifest.sh'].forEach(hook => {
     const src = path.join(hooksDir, hook);
     const dest = path.join(CLAUDE_DIR, 'hooks', hook);
     if (fs.existsSync(src)) {
@@ -99,6 +99,7 @@ function init() {
   settings.hooks = settings.hooks || {};
   settings.hooks.SessionStart = [{ matcher: '', hooks: [{ type: 'command', command: '~/.claude/hooks/memory-load.sh' }] }];
   settings.hooks.UserPromptSubmit = [{ matcher: '', hooks: [{ type: 'command', command: '~/.claude/hooks/memory-remind.sh' }] }];
+  settings.hooks.PreCompact = [{ matcher: '', hooks: [{ type: 'command', command: '~/.claude/hooks/memory-precompact.sh' }] }];
   settings.hooks.SessionEnd = [{ matcher: '', hooks: [{ type: 'command', command: '~/.claude/hooks/memory-save.sh' }] }];
 
   fs.writeFileSync(settingsPath, JSON.stringify(settings, null, 2));
@@ -139,6 +140,7 @@ function project(options) {
   log('step', 'Creating .claude/memory/ structure...');
   const memoryDir = path.join(projectDir, '.claude/memory/sessions');
   fs.mkdirSync(memoryDir, { recursive: true });
+  fs.mkdirSync(path.join(projectDir, '.claude/memory/checkpoints'), { recursive: true });
 
   const currentDate = new Date().toISOString().slice(0, 16).replace('T', ' ');
 
@@ -279,11 +281,17 @@ Architectural and significant decisions for this project.
   console.log('    - scratchpad.md');
   console.log('    - decisions.md');
   console.log('    - sessions/');
+  console.log('    - checkpoints/');
   console.log('');
   console.log('  .ai/');
   console.log('    - core/');
   console.log('    - patterns/');
   console.log('    - workflows/');
+  console.log('');
+  console.log('Features enabled:');
+  console.log('  - PreCompact hook (checkpoint before compaction)');
+  console.log('  - Semantic tagging (#tags in scratchpad)');
+  console.log('  - MANIFEST.md (just-in-time retrieval)');
   console.log('');
 }
 

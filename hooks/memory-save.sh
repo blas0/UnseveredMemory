@@ -38,6 +38,28 @@ if [ -f "$MEMORY_DIR/scratchpad.md" ] && [ -s "$MEMORY_DIR/scratchpad.md" ]; the
     echo "" >> "$MEMORY_DIR/scratchpad.md"
 fi
 
+# Generate/update MANIFEST.md for just-in-time retrieval
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [ -f "$SCRIPT_DIR/memory-manifest.sh" ]; then
+    bash "$SCRIPT_DIR/memory-manifest.sh"
+elif [ -f "${CLAUDE_PLUGIN_ROOT}/scripts/memory-manifest.sh" ]; then
+    bash "${CLAUDE_PLUGIN_ROOT}/scripts/memory-manifest.sh"
+else
+    # Inline manifest generation
+    {
+        echo "# Memory Manifest"
+        echo ""
+        echo "Generated: $(date '+%Y-%m-%d %H:%M')"
+        echo ""
+        echo "## Core Files"
+        echo ""
+        for f in context.md scratchpad.md decisions.md; do
+            [ -f "$MEMORY_DIR/$f" ] && echo "- \`$f\` ($(wc -l < "$MEMORY_DIR/$f" | tr -d ' ') lines)"
+        done
+    } > "$MEMORY_DIR/MANIFEST.md"
+    echo "[+] Generated MANIFEST.md"
+fi
+
 echo ""
 echo "REMINDER: Update context.md with:"
 echo "  - Current state of work"
