@@ -302,6 +302,8 @@ function uninstall() {
     path.join(CLAUDE_DIR, 'hooks/memory-load.sh'),
     path.join(CLAUDE_DIR, 'hooks/memory-remind.sh'),
     path.join(CLAUDE_DIR, 'hooks/memory-save.sh'),
+    path.join(CLAUDE_DIR, 'hooks/memory-precompact.sh'),
+    path.join(CLAUDE_DIR, 'hooks/memory-manifest.sh'),
     path.join(CLAUDE_DIR, 'skills/orchestrate/SKILL.md'),
     path.join(CLAUDE_DIR, 'commands/orchestrate.md')
   ];
@@ -320,6 +322,7 @@ function uninstall() {
     if (settings.hooks) {
       delete settings.hooks.SessionStart;
       delete settings.hooks.UserPromptSubmit;
+      delete settings.hooks.PreCompact;
       delete settings.hooks.SessionEnd;
       fs.writeFileSync(settingsPath, JSON.stringify(settings, null, 2));
       log('success', 'Removed hooks from settings.json');
