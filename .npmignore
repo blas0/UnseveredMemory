@@ -1,0 +1,16 @@
+.claude/
+.git/
+.gitignore
+.DS_Store
+.npmrc
+*.log
+PLAN.md
+CLAUDE.md
+Unsevered.jpeg
+node_modules/
+.claude-plugin/
+.ai/
+hooks/
+scripts/
+commands/
+templates/
