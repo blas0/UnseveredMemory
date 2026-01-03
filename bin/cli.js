@@ -6,7 +6,7 @@ const { init, project, uninstall } = require('../src/commands');
 program
   .name('unsevered-memory')
   .description('Persistent memory system for Claude Code')
-  .version('0.0.0');
+  .version('2.0.0');
 
 program
   .command('init')
