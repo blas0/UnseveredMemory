@@ -50,7 +50,7 @@ function init() {
   // Create directories
   log('step', 'Creating ~/.claude/ directory structure...');
   fs.mkdirSync(path.join(CLAUDE_DIR, 'hooks'), { recursive: true });
-  fs.mkdirSync(path.join(CLAUDE_DIR, 'skills/harness'), { recursive: true });
+  fs.mkdirSync(path.join(CLAUDE_DIR, 'skills/orchestrate'), { recursive: true });
   fs.mkdirSync(path.join(CLAUDE_DIR, 'commands'), { recursive: true });
   log('success', 'Directory structure created');
 
@@ -68,18 +68,18 @@ function init() {
   log('success', 'Hooks installed');
 
   // Copy skill
-  log('step', 'Installing harness skill...');
-  const skillSrc = path.join(PACKAGE_ROOT, 'skills/harness/SKILL.md');
-  const skillDest = path.join(CLAUDE_DIR, 'skills/harness/SKILL.md');
+  log('step', 'Installing orchestrate skill...');
+  const skillSrc = path.join(PACKAGE_ROOT, 'skills/orchestrate/SKILL.md');
+  const skillDest = path.join(CLAUDE_DIR, 'skills/orchestrate/SKILL.md');
   if (fs.existsSync(skillSrc)) {
     fs.copyFileSync(skillSrc, skillDest);
   }
   log('success', 'Skill installed');
 
   // Copy command
-  log('step', 'Installing /harness command...');
-  const cmdSrc = path.join(PACKAGE_ROOT, 'commands/harness.md');
-  const cmdDest = path.join(CLAUDE_DIR, 'commands/harness.md');
+  log('step', 'Installing /orchestrate command...');
+  const cmdSrc = path.join(PACKAGE_ROOT, 'commands/orchestrate.md');
+  const cmdDest = path.join(CLAUDE_DIR, 'commands/orchestrate.md');
   if (fs.existsSync(cmdSrc)) {
     fs.copyFileSync(cmdSrc, cmdDest);
   }
@@ -122,7 +122,7 @@ function init() {
   console.log('  - CLAUDE.md');
   console.log('  - settings.json');
   console.log('  - hooks/');
-  console.log('  - skills/harness/');
+  console.log('  - skills/orchestrate/');
   console.log('  - commands/');
   console.log('');
   console.log('Next: Run `unsevered-memory project` in your project directory');
@@ -302,8 +302,8 @@ function uninstall() {
     path.join(CLAUDE_DIR, 'hooks/memory-load.sh'),
     path.join(CLAUDE_DIR, 'hooks/memory-remind.sh'),
     path.join(CLAUDE_DIR, 'hooks/memory-save.sh'),
-    path.join(CLAUDE_DIR, 'skills/harness/SKILL.md'),
-    path.join(CLAUDE_DIR, 'commands/harness.md')
+    path.join(CLAUDE_DIR, 'skills/orchestrate/SKILL.md'),
+    path.join(CLAUDE_DIR, 'commands/orchestrate.md')
   ];
 
   filesToRemove.forEach(file => {
