@@ -6,18 +6,26 @@ For projects with `.claude/memory/`:
 
 ### Session Start
 - Memory loads automatically via hook
+- Review MANIFEST.md for available memories (just-in-time access)
 - Review context.md for current state
 - Check scratchpad.md for unfinished work
+- If checkpoints/ exists, review for compaction-preserved context
 - Reference .ai/ for patterns and architecture
 
 ### During Session
 - Write operations to scratchpad.md as you work
+- Use #tags to categorize work (e.g., #feature #bugfix #refactor)
 - Update .ai/ when patterns emerge (3+ uses)
 - Update .ai/core/ when architecture changes
 - Log decisions that affect project direction
 
+### Before Compaction
+- PreCompact hook automatically saves checkpoint
+- Critical context preserved in checkpoints/
+
 ### Session End
 - Hook archives scratchpad automatically
+- Hook updates MANIFEST.md for next session
 - Update context.md with current state
 - Append architectural decisions to decisions.md
 
@@ -48,13 +56,28 @@ For projects with `.claude/memory/`:
 
 | Topic | Location |
 |-------|----------|
+| Memory index | `.claude/memory/MANIFEST.md` |
 | Current state | `.claude/memory/context.md` |
 | Session log | `.claude/memory/scratchpad.md` |
 | Decisions | `.claude/memory/decisions.md` |
 | Archives | `.claude/memory/sessions/` |
+| Compaction saves | `.claude/memory/checkpoints/` |
 | Patterns | `.ai/patterns/` |
 | Architecture | `.ai/core/` |
 | Tech stack | `.ai/core/technology-stack.md` |
+
+## Tag Conventions
+
+Use #tags in scratchpad for semantic discovery:
+
+| Tag | Meaning |
+|-----|---------|
+| `#feature` | New functionality |
+| `#bugfix` | Bug fixes |
+| `#refactor` | Code improvements |
+| `#arch` | Architectural changes |
+| `#decision` | Decisions made |
+| `#blocker` | Issues encountered |
 
 ## Completion Protocol
 
@@ -68,7 +91,13 @@ When work is complete:
 
 ## Enforcement
 
-The UserPromptSubmit hook displays memory state on every prompt.
+The UserPromptSubmit hook displays memory state on every prompt:
+- Current task
+- Scratchpad line count
+- .ai/ last update
+- Active #tags (if any)
+- Checkpoint count (if compaction occurred)
+
 Use this reminder to stay oriented during long sessions.
 
-For complex multi-step tasks, use `/harness` to activate orchestrator mode.
+For complex multi-step tasks, use `/orchestrate` to activate orchestrator mode.

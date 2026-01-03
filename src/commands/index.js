@@ -50,14 +50,14 @@ function init() {
   // Create directories
   log('step', 'Creating ~/.claude/ directory structure...');
   fs.mkdirSync(path.join(CLAUDE_DIR, 'hooks'), { recursive: true });
-  fs.mkdirSync(path.join(CLAUDE_DIR, 'skills/harness'), { recursive: true });
+  fs.mkdirSync(path.join(CLAUDE_DIR, 'skills/orchestrate'), { recursive: true });
   fs.mkdirSync(path.join(CLAUDE_DIR, 'commands'), { recursive: true });
   log('success', 'Directory structure created');
 
   // Copy hooks
   log('step', 'Installing hooks...');
   const hooksDir = path.join(PACKAGE_ROOT, 'scripts');
-  ['memory-load.sh', 'memory-remind.sh', 'memory-save.sh'].forEach(hook => {
+  ['memory-load.sh', 'memory-remind.sh', 'memory-save.sh', 'memory-precompact.sh', 'memory-manifest.sh'].forEach(hook => {
     const src = path.join(hooksDir, hook);
     const dest = path.join(CLAUDE_DIR, 'hooks', hook);
     if (fs.existsSync(src)) {
@@ -68,18 +68,18 @@ function init() {
   log('success', 'Hooks installed');
 
   // Copy skill
-  log('step', 'Installing harness skill...');
-  const skillSrc = path.join(PACKAGE_ROOT, 'skills/harness/SKILL.md');
-  const skillDest = path.join(CLAUDE_DIR, 'skills/harness/SKILL.md');
+  log('step', 'Installing orchestrate skill...');
+  const skillSrc = path.join(PACKAGE_ROOT, 'skills/orchestrate/SKILL.md');
+  const skillDest = path.join(CLAUDE_DIR, 'skills/orchestrate/SKILL.md');
   if (fs.existsSync(skillSrc)) {
     fs.copyFileSync(skillSrc, skillDest);
   }
   log('success', 'Skill installed');
 
   // Copy command
-  log('step', 'Installing /harness command...');
-  const cmdSrc = path.join(PACKAGE_ROOT, 'commands/harness.md');
-  const cmdDest = path.join(CLAUDE_DIR, 'commands/harness.md');
+  log('step', 'Installing /orchestrate command...');
+  const cmdSrc = path.join(PACKAGE_ROOT, 'commands/orchestrate.md');
+  const cmdDest = path.join(CLAUDE_DIR, 'commands/orchestrate.md');
   if (fs.existsSync(cmdSrc)) {
     fs.copyFileSync(cmdSrc, cmdDest);
   }
@@ -99,6 +99,7 @@ function init() {
   settings.hooks = settings.hooks || {};
   settings.hooks.SessionStart = [{ matcher: '', hooks: [{ type: 'command', command: '~/.claude/hooks/memory-load.sh' }] }];
   settings.hooks.UserPromptSubmit = [{ matcher: '', hooks: [{ type: 'command', command: '~/.claude/hooks/memory-remind.sh' }] }];
+  settings.hooks.PreCompact = [{ matcher: '', hooks: [{ type: 'command', command: '~/.claude/hooks/memory-precompact.sh' }] }];
   settings.hooks.SessionEnd = [{ matcher: '', hooks: [{ type: 'command', command: '~/.claude/hooks/memory-save.sh' }] }];
 
   fs.writeFileSync(settingsPath, JSON.stringify(settings, null, 2));
@@ -121,7 +122,7 @@ function init() {
   console.log('  - CLAUDE.md');
   console.log('  - settings.json');
   console.log('  - hooks/');
-  console.log('  - skills/harness/');
+  console.log('  - skills/orchestrate/');
   console.log('  - commands/');
   console.log('');
   console.log('Next: Run `unsevered-memory project` in your project directory');
@@ -139,6 +140,7 @@ function project(options) {
   log('step', 'Creating .claude/memory/ structure...');
   const memoryDir = path.join(projectDir, '.claude/memory/sessions');
   fs.mkdirSync(memoryDir, { recursive: true });
+  fs.mkdirSync(path.join(projectDir, '.claude/memory/checkpoints'), { recursive: true });
 
   const currentDate = new Date().toISOString().slice(0, 16).replace('T', ' ');
 
@@ -279,11 +281,17 @@ Architectural and significant decisions for this project.
   console.log('    - scratchpad.md');
   console.log('    - decisions.md');
   console.log('    - sessions/');
+  console.log('    - checkpoints/');
   console.log('');
   console.log('  .ai/');
   console.log('    - core/');
   console.log('    - patterns/');
   console.log('    - workflows/');
+  console.log('');
+  console.log('Features enabled:');
+  console.log('  - PreCompact hook (checkpoint before compaction)');
+  console.log('  - Semantic tagging (#tags in scratchpad)');
+  console.log('  - MANIFEST.md (just-in-time retrieval)');
   console.log('');
 }
 
@@ -294,8 +302,10 @@ function uninstall() {
     path.join(CLAUDE_DIR, 'hooks/memory-load.sh'),
     path.join(CLAUDE_DIR, 'hooks/memory-remind.sh'),
     path.join(CLAUDE_DIR, 'hooks/memory-save.sh'),
-    path.join(CLAUDE_DIR, 'skills/harness/SKILL.md'),
-    path.join(CLAUDE_DIR, 'commands/harness.md')
+    path.join(CLAUDE_DIR, 'hooks/memory-precompact.sh'),
+    path.join(CLAUDE_DIR, 'hooks/memory-manifest.sh'),
+    path.join(CLAUDE_DIR, 'skills/orchestrate/SKILL.md'),
+    path.join(CLAUDE_DIR, 'commands/orchestrate.md')
   ];
 
   filesToRemove.forEach(file => {
@@ -312,6 +322,7 @@ function uninstall() {
     if (settings.hooks) {
       delete settings.hooks.SessionStart;
       delete settings.hooks.UserPromptSubmit;
+      delete settings.hooks.PreCompact;
       delete settings.hooks.SessionEnd;
       fs.writeFileSync(settingsPath, JSON.stringify(settings, null, 2));
       log('success', 'Removed hooks from settings.json');
